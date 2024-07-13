@@ -1,32 +1,30 @@
-# Use the official Golang image as a build stage
-FROM golang:latest AS build
+FROM golang:alpine as builder
 
-# Set the Current Working Directory inside the container
 WORKDIR /app
 
-# Copy go mod and sum files
-COPY go.mod go.sum ./
-
-# Download all dependencies. Dependencies will be cached if the go.mod and go.sum files are not changed
-RUN go mod download
-
-# Copy the source code into the container
 COPY . .
 
-# Build the Go application
-RUN go build -o main .
+# Add "-tags production" if you are using embedded configuration
+RUN go build -ldflags "-w -s"
 
-# Start a new stage from scratch
-FROM golang:latest
+FROM alpine:latest
 
-# Set the Current Working Directory inside the container
-WORKDIR /root/
+WORKDIR /app
 
-# Copy the Pre-built binary file from the previous stage
-COPY --from=build /app/main .
+COPY --from=builder /app/docker-goyave ./docker-goyave
 
-# Expose port 8080 to the outside world
-EXPOSE 8080
+# Not needed if you are using embed resources
+COPY resources /app/resources 
 
-# Command to run the executable
-CMD ["./main"]
+# Not needed if you are using embed configuration
+COPY config.production.json ./config.production.json
+
+RUN useradd -r -U go-exec -M -d /app -s /bin/false
+RUN chown -R go-exec /app
+
+USER go-exec
+
+EXPOSE 80
+ENV GOYAVE_ENV=production
+
+ENTRYPOINT [ "./docker-goyave" ]

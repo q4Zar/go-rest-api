@@ -1,1 +1,5 @@
-{}
+{
+    "database": {
+        "host": "${DB_HOST}"
+    }
+}

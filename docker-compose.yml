@@ -1,13 +1,13 @@
 services:
-  app:
+  go-api:
     build:
       context: ./app
     ports:
       - "8080:8080"
     depends_on:
-      - db
+      - pgdb
 
-  db:
+  pgdb:
     image: postgres:14
     environment:
       POSTGRES_USER: postgres

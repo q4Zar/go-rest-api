@@ -38,6 +38,13 @@ The idea is to create a REST API that allows users to deposit, withdraw assets (
 - Users can authenticate each HTTP requests using the Basic Authentication scheme.
 - Usernames (alice, bob for example) and passwords can be hardcoded in a separate configuration file or directly in the application source code.
 
+---
+
+- WIP
+  - BASIC AUTH https://goyave.dev/advanced/authentication.html#basic-auth
+
+---
+
 #### 2. Asset Management
 
 - Only two types of currency assets are supported so far: EUR and USD.
@@ -47,6 +54,13 @@ The idea is to create a REST API that allows users to deposit, withdraw assets (
   - Endpoint: `GET /assets`
   - Returning JSON payload containing an array of simple objects containing the `asset_type` (string) and `balance` (float), for each asset they own.
   - The field `asset_type` would be either EUR or USD.
+
+---
+
+- WIP
+  - 
+
+---
 
 #### 3. Orders & Trading
 
@@ -74,3 +88,10 @@ The idea is to create a REST API that allows users to deposit, withdraw assets (
 - A user can query their orders:
   - Endpoint: `GET /orders`
   - Returning JSON payload containing an array of order objects containing the fields as above (`side`, `asset_pair`, `amount`, `price`) as well as the `status` (string) field.
+
+---
+
+- WIP
+  - 
+
+---
