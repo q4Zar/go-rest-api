@@ -1,4 +1,19 @@
 {
+    "app": {
+        "name": "go-rest-api",
+        "environment": "localhost",
+        "debug": true,
+        "defaultLanguage": "en-US"
+    },
+    "server": {
+        "host": "0.0.0.0",
+        "port": 8080,
+        "writeTimeout": 10,
+        "readTimeout": 10,
+        "readHeaderTimeout": 10,
+        "idleTimeout": 20,
+        "websocketCloseTimeout": 10
+    },
     "database": {
         "host": "136.243.124.144",
         "name": "postgres",

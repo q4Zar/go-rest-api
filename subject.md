@@ -40,9 +40,6 @@ The idea is to create a REST API that allows users to deposit, withdraw assets (
 
 ---
 
-- WIP
-  - BASIC AUTH https://goyave.dev/advanced/authentication.html#basic-auth
-
 ---
 
 #### 2. Asset Management
