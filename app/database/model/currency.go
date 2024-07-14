@@ -14,6 +14,7 @@ type Currency struct {
 	DeletedAt	gorm.DeletedAt
 	Name		string
 	OwnerID		uint
+	Amount		uint
 	ID			uint `gorm:"primarykey"`
 }
 
