@@ -7,11 +7,23 @@ import (
 	"github.com/q4Zar/go-rest-api/http/route"
 
 	"goyave.dev/goyave/v5"
+	"goyave.dev/goyave/v5/config"
 	"goyave.dev/goyave/v5/util/errors"
+	_ "goyave.dev/goyave/v5/database/dialect/postgres"
 )
 
 func main() {
-	opts := goyave.Options{}
+
+	cfg, err := config.Load()
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err.(*errors.Error).String())
+		os.Exit(1)
+	}
+
+	opts := goyave.Options{
+		Config: cfg,
+	}
+
 
 	server, err := goyave.New(opts)
 	if err != nil {
