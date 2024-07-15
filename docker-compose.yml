@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
 
   postgres:
@@ -7,7 +9,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 3f4f2770c42a8efddc80e61da8d7c9f71cfe2eb03ff6040542ad24a42192731f4af7e875ca5fc8736240
     ports:
-      - '0.0.0.0:55432:5432'
+      - '55432:5432'
     restart: on-failure
 
   # go-api:
@@ -20,6 +22,8 @@ services:
   #   depends_on:
   #     - postgres
   #   restart: on-failure
+  #   networks:
+  #     - default
 
 networks:
   default:

@@ -18,9 +18,9 @@ import (
 
 type Repository interface {
 	Index(ctx context.Context, request *filter.Request) (*database.Paginator[*model.Currency], error)
+	GetByID(ctx context.Context, id uint) (*model.Currency, error)
 	Create(ctx context.Context, currency *model.Currency) (*model.Currency, error)
 	Update(ctx context.Context, currency *model.Currency) (*model.Currency, error)
-	GetByID(ctx context.Context, id uint) (*model.Currency, error)
 	Delete(ctx context.Context, id uint) error
 	IsOwner(ctx context.Context, resourceID, ownerID uint) (bool, error)
 }
