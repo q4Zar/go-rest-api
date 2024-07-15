@@ -7,7 +7,7 @@
     },
     "server": {
         "host": "0.0.0.0",
-        "port": 8080,
+        "port": 8081,
         "writeTimeout": 10,
         "readTimeout": 10,
         "readHeaderTimeout": 10,
@@ -24,9 +24,9 @@
         "options": "sslmode=disable application_name=goyave"
     },
     "auth": {
-        "basic": {
-            "username": "admin",
-            "password": "admin"
+        "jwt": {
+            "secret": "jwt-secret",
+            "expiry": 3000
         }
     }
 }

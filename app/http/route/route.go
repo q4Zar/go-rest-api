@@ -1,24 +1,31 @@
 package route
 
 import (
-	"net/http"
-
 	"github.com/q4Zar/go-rest-api/http/controller/currency"
 	"github.com/q4Zar/go-rest-api/http/controller/user"
-	// "github.com/q4Zar/go-rest-api/service"
+	"github.com/q4Zar/go-rest-api/service"
+	userservice "github.com/q4Zar/go-rest-api/service/user"
 	"goyave.dev/goyave/v5"
 	"goyave.dev/goyave/v5/auth"
+	"goyave.dev/goyave/v5/cors"
 	"goyave.dev/goyave/v5/log"
+	"goyave.dev/goyave/v5/middleware/parse"
 )
 
 func Register(server *goyave.Server, router *goyave.Router) {
+	router.CORS(cors.Default())
 	router.GlobalMiddleware(log.CombinedLogMiddleware())
-	router.GlobalMiddleware(auth.ConfigBasicAuth()).SetMeta(auth.MetaAuth, true)
 
-	router.Get("/hello", func(response *goyave.Response, request *goyave.Request) {
-		response.String(http.StatusOK, "Hello world")
-	})
+	userService := server.Service(service.User).(*userservice.Service)
+	authenticator := auth.NewJWTAuthenticator(userService)
+	authMiddleware := auth.Middleware(authenticator)
+	router.GlobalMiddleware(authMiddleware)
 
+	router.GlobalMiddleware(&parse.Middleware{})
+
+	loginController := auth.NewJWTController(userService, "Password")
+
+	router.Controller(loginController)
 	router.Controller(user.NewController())
 	router.Controller(currency.NewController())
 }

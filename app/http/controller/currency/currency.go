@@ -42,7 +42,7 @@ func (ctrl *Controller) Init(server *goyave.Server) {
 func (ctrl *Controller) RegisterRoutes(router *goyave.Router) {
 	subrouter := router.Subrouter("/currencies")
 	subrouter.Get("/", ctrl.Index).ValidateQuery(filter.Validation)
-	subrouter.Get("/{slug}", ctrl.Show)
+	subrouter.Get("/{currencyID}", ctrl.Show)
 
 	authRouter := subrouter.Group().SetMeta(auth.MetaAuth, true)
 	authRouter.Post("/", ctrl.Create).ValidateBody(ctrl.CreateRequest)

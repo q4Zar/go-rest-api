@@ -17,8 +17,8 @@ type User struct {
 
 // InternalUser contains private user info that should not be exposed to clients.
 type InternalUser struct {
-	Password string						`json:"password"`
 	User
+	Password string						`json:"password"`
 }
 
 type RegisterUser struct {
