@@ -28,9 +28,3 @@ type UpdateCurrency struct {
 	Name    	typeutil.Undefined[string]	`json:"name"`
 	Amount		typeutil.Undefined[uint]	`json:"amount"`
 }
-
-type ShowCurrency struct {
-	Name    	string		`json:"name"`
-	Amount		uint		`json:"amount"`
-	OwnerID 	uint		`json:"ownerID"`
-}

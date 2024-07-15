@@ -18,7 +18,7 @@ import (
 
 type Service interface {
 	Index(ctx context.Context, request *filter.Request) (*database.PaginatorDTO[*dto.Currency], error)
-	GetByID(ctx context.Context, id uint) (*dto.ShowCurrency, error)
+	GetByID(ctx context.Context, id uint) (*dto.Currency, error)
 	Create(ctx context.Context, createDTO *dto.CreateCurrency) error
 	Update(ctx context.Context, id uint, updateDTO *dto.UpdateCurrency) error
 	Delete(ctx context.Context, id uint) error
