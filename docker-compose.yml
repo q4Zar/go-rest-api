@@ -1,26 +1,26 @@
 services:
 
-  # pgdb:
-  #   image: postgres:latest
-  #   environment:
-  #     POSTGRES_USER: postgres
-  #     POSTGRES_PASSWORD: password
-  #     POSTGRES_DB: postgres
-  #   ports:
-  #     - "55432:5432"
-
-  go-api:
-    build:
-      context: ./app
-    env_file:
-      - .env
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 3f4f2770c42a8efddc80e61da8d7c9f71cfe2eb03ff6040542ad24a42192731f4af7e875ca5fc8736240
     ports:
-      - "8080:8080"
-    networks:
-      - tranched
-    # depends_on:
-    #   - pgdb
+      - '0.0.0.0:55432:5432'
+    restart: on-failure
+
+  # go-api:
+  #   build:
+  #     context: ./app
+  #   env_file:
+  #     - .env
+  #   ports:
+  #     - "8080:8080"
+  #   depends_on:
+  #     - postgres
+  #   restart: on-failure
 
 networks:
-  tranched:
-    external: true
+  default:
+    name: goyave-backend

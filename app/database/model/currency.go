@@ -7,13 +7,20 @@ import (
 	"gorm.io/gorm"
 )
 
+type		CurrencyName string
+
+const (
+    Euro	CurrencyName = "EUR"
+    Dollar	CurrencyName = "USD"
+)
+
 type Currency struct {
 	Owner		*User
 	CreatedAt	time.Time
 	UpdatedAt	null.Time
 	DeletedAt	gorm.DeletedAt
-	Name		string
-	OwnerID		uint
+	Name		CurrencyName`gorm:"type:enum('EUR', 'USD'),uniqueIndex:idx_nameowner"`
+	OwnerID		uint`gorm:"uniqueIndex:idx_nameowner"`
 	Amount		uint
 	ID			uint `gorm:"primarykey"`
 }
