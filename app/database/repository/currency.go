@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"log"
 
 	"github.com/q4Zar/go-rest-api/database/model"
 	"gorm.io/gorm"
@@ -42,6 +43,7 @@ func (r *Currency) Index(ctx context.Context, request *filter.Request) (*databas
 func (r *Currency) GetByID(ctx context.Context, id uint) (*model.Currency, error) {
 	var Currency *model.Currency
 	db := session.DB(ctx, r.DB).Where("id", id).First(&Currency)
+	log.Println(Currency)
 	return Currency, errors.New(db.Error)
 }
 

@@ -1,6 +1,6 @@
 # github.com/q4Zar/go-rest-api
 
-### state-of-mind
+## state-of-mind
 - Overall i decided to use goyave because i like the way of building with it and it's integration with postgresql with native GORM i think it's super pertinent ;)
     - I never used it before starting the test i did a lil research and found it
     - So i've added some learning curve but that was cool and stimulated my brain

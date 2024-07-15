@@ -18,7 +18,7 @@ import (
 
 type Service interface {
 	Index(ctx context.Context, request *filter.Request) (*database.PaginatorDTO[*dto.Currency], error)
-	GetByID(ctx context.Context, id uint) (*dto.Currency, error)
+	GetByID(ctx context.Context, id uint) (*dto.ShowCurrency, error)
 	Create(ctx context.Context, createDTO *dto.CreateCurrency) error
 	Update(ctx context.Context, id uint, updateDTO *dto.UpdateCurrency) error
 	Delete(ctx context.Context, id uint) error
@@ -42,14 +42,14 @@ func (ctrl *Controller) Init(server *goyave.Server) {
 func (ctrl *Controller) RegisterRoutes(router *goyave.Router) {
 	subrouter := router.Subrouter("/currencies")
 	subrouter.Get("/", ctrl.Index).ValidateQuery(filter.Validation)
-	subrouter.Get("/{currencyID}", ctrl.Show)
-
+	
 	authRouter := subrouter.Group().SetMeta(auth.MetaAuth, true)
 	authRouter.Post("/", ctrl.Create).ValidateBody(ctrl.CreateRequest)
-
+	
 	ownedRouter := authRouter.Group()
 	ownerMiddleware := middleware.NewOwner("currencyID", ctrl.CurrencyService)
 	ownedRouter.Middleware(ownerMiddleware)
+	ownedRouter.Get("/{currencyID:[0-9]+}", ctrl.Show)
 	ownedRouter.Patch("/{currencyID:[0-9]+}", ctrl.Update).ValidateBody(ctrl.UpdateRequest)
 	ownedRouter.Delete("/{currencyID:[0-9]+}", ctrl.Delete)
 }
@@ -63,23 +63,18 @@ func (ctrl *Controller) Index(response *goyave.Response, request *goyave.Request
 }
 
 func (ctrl *Controller) Show(response *goyave.Response, request *goyave.Request) {
-	// Retrieve the value from the RouteParams map
-    currencyIDStr := request.RouteParams["currencyID"]
+	id, err := strconv.ParseUint(request.RouteParams["currencyID"], 10, 64)
+	log.Println(id)
+	if err != nil {
+		response.Status(http.StatusNotFound)
+		return
+	}
 
-    // Convert the string to uint
-    currencyID, err := strconv.ParseUint(currencyIDStr, 10, 64)
-    if err != nil {
-        log.Fatalf("Error converting currencyID to uint: %v", err)
-    }
-
-    // Since strconv.ParseUint returns a uint64, you may need to cast it to uint
-    currencyIDUint := uint(currencyID)
-
-	user, err := ctrl.CurrencyService.GetByID(request.Context(), currencyIDUint)
+	currency, err := ctrl.CurrencyService.GetByID(request.Context(), uint(id))
 	if response.WriteDBError(err) {
 		return
 	}
-	response.JSON(http.StatusOK, user)
+	response.JSON(http.StatusOK, currency)
 }
 
 func (ctrl *Controller) Create(response *goyave.Response, request *goyave.Request) {
