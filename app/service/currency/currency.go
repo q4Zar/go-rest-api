@@ -2,9 +2,6 @@ package currency
 
 import (
 	"context"
-	"encoding/base32"
-	"fmt"
-	"strings"
 
 	"github.com/q4Zar/go-rest-api/database/model"
 	"github.com/q4Zar/go-rest-api/dto"
@@ -48,9 +45,17 @@ func (s *Service) Index(ctx context.Context, request *filter.Request) (*database
 	return typeutil.MustConvert[*database.PaginatorDTO[*dto.Currency]](paginator), nil
 }
 
+func (s *Service) GetByID(ctx context.Context, id uint) (*dto.Currency, error) {
+	user, err := s.Repository.GetByID(ctx, id)
+	if err != nil {
+		return nil, errors.New(err)
+	}
+	return typeutil.MustConvert[*dto.Currency](user), nil
+}
+
 func (s *Service) Create(ctx context.Context, createDTO *dto.CreateCurrency) error {
 	currency := typeutil.Copy(&model.Currency{}, createDTO)
-	_, err = s.Repository.Create(ctx, currency)
+	_, err := s.Repository.Create(ctx, currency)
 	return errors.New(err)
 }
 

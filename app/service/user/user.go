@@ -3,17 +3,14 @@ package user
 import (
 	"context"
 	"fmt"
-	"io/fs"
 
 	"github.com/q4Zar/go-rest-api/database/model"
 	"github.com/q4Zar/go-rest-api/dto"
 	"github.com/q4Zar/go-rest-api/service"
-	"github.com/guregu/null/v5"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 	"goyave.dev/goyave/v5/slog"
 	"goyave.dev/goyave/v5/util/errors"
-	"goyave.dev/goyave/v5/util/fsutil"
 	"goyave.dev/goyave/v5/util/session"
 	"goyave.dev/goyave/v5/util/typeutil"
 )
