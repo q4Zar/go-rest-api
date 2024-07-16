@@ -7,7 +7,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type Balance struct {
+type Asset struct {
 	CreatedAt	time.Time
 	UpdatedAt	null.Time
 	DeletedAt	gorm.DeletedAt
@@ -17,6 +17,6 @@ type Balance struct {
 	ID			uint `gorm:"primarykey"`
 }
 
-func (Balance) TableName() string {
-	return "balances"
+func (Asset) TableName() string {
+	return "assets"
 }

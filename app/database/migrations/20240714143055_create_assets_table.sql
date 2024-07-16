@@ -1,5 +1,5 @@
 -- migrate:up
-CREATE TABLE balances (
+CREATE TABLE assets (
     id BIGSERIAL PRIMARY KEY,
     amount DOUBLE PRECISION NOT NULL,
     user_id BIGINT REFERENCES users (id),
@@ -11,4 +11,4 @@ CREATE TABLE balances (
 );
 
 -- migrate:down
-DROP TABLE IF EXISTS balances;
+DROP TABLE IF EXISTS assets;

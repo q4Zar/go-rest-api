@@ -18,10 +18,19 @@ currency_dollar=$(curl -X POST -H "Authorization: Bearer $token" -d '{"name": "U
 echo $currency_dollar
 
 # 3
-# echo 'creates balances'
+echo 'creates assets'
 
-# balance_euro=$(curl -X POST -H "Authorization: Bearer $token" -d '{"currency": "EUR", "amount" : 1000}' -H "Content-Type: application/json" http://127.0.0.1:8080/balances)
-# echo $currency_euro
+asset_euro_success=$(curl -X POST -H "Authorization: Bearer $token" -d '{"currencyID": 1, "userID": 1, "amount" : 12356.54897}' -H "Content-Type: application/json" http://127.0.0.1:8080/assets)
+echo $asset_euro_success
+
+asset_euro_fails_1=$(curl -X POST -H "Authorization: Bearer $token" -d '{"currencyID": 3, "userID": 1, "amount" : 12356.54897}' -H "Content-Type: application/json" http://127.0.0.1:8080/assets)
+echo $asset_euro_fails_1
+
+asset_dollar_success=$(curl -X POST -H "Authorization: Bearer $token" -d '{"currencyID": 2, "userID": 1, "amount" : 12356.54897}' -H "Content-Type: application/json" http://127.0.0.1:8080/assets)
+echo $asset_dollar_success
+
+asset_dollar_fails_1=$(curl -X POST -H "Authorization: Bearer $token" -d '{"currencyID": 3, "userID": 1, "amount" : 12356.54897}' -H "Content-Type: application/json" http://127.0.0.1:8080/assets)
+echo $asset_dollar_fails_1
 
 # balance_dollar=$(curl -X POST -H "Authorization: Bearer $token" -d '{"currency": "USD", "amount" : 1000}' -H "Content-Type: application/json" http://127.0.0.1:8080/balances)
 # echo $currency_dollar

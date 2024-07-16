@@ -7,6 +7,7 @@ import (
 	"github.com/q4Zar/go-rest-api/database/repository"
 	// seeders "github.com/q4Zar/go-rest-api/database/seed"
 	"github.com/q4Zar/go-rest-api/http/route"
+	"github.com/q4Zar/go-rest-api/service/asset"
 	"github.com/q4Zar/go-rest-api/service/currency"
 	"github.com/q4Zar/go-rest-api/service/user"
 
@@ -64,8 +65,10 @@ func registerServices(server *goyave.Server) {
 	session := session.GORM(server.DB(), nil)
 
 	userRepo := repository.NewUser(server.DB())
+	assetRepo := repository.NewAsset(server.DB())
 	currencyRepo := repository.NewCurrency(server.DB())
 
 	server.RegisterService(user.NewService(session, server.Logger, userRepo))
+	server.RegisterService(asset.NewService(session, assetRepo))
 	server.RegisterService(currency.NewService(session, currencyRepo))
 }

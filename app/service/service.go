@@ -2,6 +2,7 @@ package service
 
 // Name of the implemented services.
 const (
-	User		= "user"
+	Asset		= "asset"
 	Currency	= "currency"
+	User		= "user"
 )

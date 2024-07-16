@@ -7,7 +7,7 @@ import (
 	"goyave.dev/goyave/v5/util/typeutil"
 )
 
-type Balance struct {
+type Asset struct {
 	CreatedAt	time.Time	`json:"createdAt"`
 	UpdatedAt	null.Time	`json:"updatedAt"`
 	Amount    	float64		`json:"amount"`
@@ -16,12 +16,12 @@ type Balance struct {
 	ID        	uint		`json:"id"`
 }
 
-type CreateBalance struct {
+type CreateAsset struct {
 	Amount		float64		`json:"amount"`
-	CurrencyID	uint		`json:"CurrencyID"`
-	UserID		uint   		`json:"UserID"`
+	CurrencyID	uint		`json:"currencyID"`
+	UserID		uint   		`json:"userID"`
 }
 
-type UpdateBalance struct {
+type UpdateAsset struct {
 	Amount    typeutil.Undefined[float64] `json:"amount"`
 }

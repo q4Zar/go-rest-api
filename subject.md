@@ -38,10 +38,6 @@ The idea is to create a REST API that allows users to deposit, withdraw assets (
 - Users can authenticate each HTTP requests using the Basic Authentication scheme.
 - Usernames (alice, bob for example) and passwords can be hardcoded in a separate configuration file or directly in the application source code.
 
----
-
----
-
 #### 2. Asset Management
 
 - Only two types of currency assets are supported so far: EUR and USD.

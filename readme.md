@@ -15,27 +15,14 @@
 ### exercice
 
 #### step 1 
-- creating users in DB
-- using JWT by login users
+- signup user in DB
+- login user and get JWT
 
 #### step 2
-- currency is the balance (could done another table but i'll use enum and unicity)
-- set unicity owner-id and currency-name 
-- ⚠️currency index jump when unicity constraint error
+- currency is a table
+
 
 #### step 3
 
 ---
 
-### run
-
-#### database-migrations
-- #1 make migrate
-
-#### curl
-- #2 create-user : `curl -X POST -d '{"username": "dams", "password": "p4ssW0rd_"}' -H "Content-Type: application/json" http://127.0.0.1:8080/users`
-- #3 login-user : `curl -X POST -d '{"username": "dams", "password": "p4ssW0rd_"}' -H "Content-Type: application/json" http://127.0.0.1:8080/login`
-- #4 create-currency-balance-by-user: 
-    - EUR `curl -X POST -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MjEwMzg4MzYsIm5iZiI6MTcyMTAzNTgzNiwic3ViIjoiZGFtcyJ9.cgMhkTL5zAiLCL4WzAztTI_O4qu4qXLZ14u65UnRtM0" -d '{"name": "EUR", "amount": 1000}' -H "Content-Type: application/json" http://127.0.0.1:8080/currencies`
-    - USD `curl -X POST -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MjEwMzg4MzYsIm5iZiI6MTcyMTAzNTgzNiwic3ViIjoiZGFtcyJ9.cgMhkTL5zAiLCL4WzAztTI_O4qu4qXLZ14u65UnRtM0" -d '{"name": "USD", "amount": 1000}' -H "Content-Type: application/json" http://127.0.0.1:8080/currencies`
-- #5 list-currencies-from-user : `curl -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MjEwMzg4MzYsIm5iZiI6MTcyMTAzNTgzNiwic3ViIjoiZGFtcyJ9.cgMhkTL5zAiLCL4WzAztTI_O4qu4qXLZ14u65UnRtM0" -H "Content-Type: application/json" http://127.0.0.1:8080/currency`
