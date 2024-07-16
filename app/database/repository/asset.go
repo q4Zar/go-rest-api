@@ -29,9 +29,9 @@ func (r *Asset) Index(ctx context.Context, request *filter.Request) (*database.P
 		},
 		// FieldsSearch: []uint{"userID"},
 		Blacklist: filter.Blacklist{
-			FieldsBlacklist: []string{"deleted_at"},
+			FieldsBlacklist: []string{"deleted_at", "created_at", "updated_at"},
 			// Relations: map[string]*filter.Blacklist{
-				// "Author": {IsFinal: true},
+			// 	"currencyID": {IsFinal: true},
 			// },
 		},
 	}
@@ -68,3 +68,10 @@ func (r *Asset) Delete(ctx context.Context, id uint) error {
 	}
 	return errors.New(db.Error)
 }
+
+func (r *User) Paginate(ctx context.Context, request *filter.Request) (*database.Paginator[*model.Asset], error) {
+	assets := []*model.Asset{}
+	paginator, err := filter.Scope(session.DB(ctx, r.DB), request, &assets)
+	return paginator, errors.New(err)
+}
+	

@@ -28,16 +28,16 @@ type StorageService interface {
 }
 
 type Service struct {
-	Session        session.Session
-	Repository     Repository
-	Logger         *slog.Logger
+	Session    session.Session
+	Repository Repository
+	Logger     *slog.Logger
 }
 
-func NewService(session session.Session, logger *slog.Logger, repository Repository, ) *Service {
+func NewService(session session.Session, logger *slog.Logger, repository Repository) *Service {
 	return &Service{
-		Session:        session,
-		Logger:         logger,
-		Repository:     repository,
+		Session:    session,
+		Logger:     logger,
+		Repository: repository,
 	}
 }
 

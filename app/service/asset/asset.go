@@ -17,11 +17,11 @@ import (
 // }
 
 type Repository interface {
-	Index(ctx context.Context, request *filter.Request) (*database.Paginator[*model.Asset], error)
 	GetByID(ctx context.Context, id uint) (*model.Asset, error)
 	Create(ctx context.Context, asset *model.Asset) (*model.Asset, error)
 	Update(ctx context.Context, asset *model.Asset) (*model.Asset, error)
 	Delete(ctx context.Context, id uint) error
+	Paginate(ctx context.Context, request *filter.Request) (*database.PaginatorDTO[*dto.User], error)
 }
 
 type Service struct {
@@ -34,14 +34,6 @@ func NewService(session session.Session, repository Repository) *Service {
 		Session:    session,
 		Repository: repository,
 	}
-}
-
-func (s *Service) Index(ctx context.Context, request *filter.Request) (*database.PaginatorDTO[*dto.Asset], error) {
-	paginator, err := s.Repository.Index(ctx, request)
-	if err != nil {
-		return nil, errors.New(err)
-	}
-	return typeutil.MustConvert[*database.PaginatorDTO[*dto.Asset]](paginator), nil
 }
 
 func (s *Service) Create(ctx context.Context, createDTO *dto.CreateAsset) error {
@@ -73,4 +65,9 @@ func (s *Service) Delete(ctx context.Context, id uint) error {
 
 func (s *Service) Name() string {
 	return service.Asset
+}
+
+func (s *Service) Paginate(ctx context.Context, request *filter.Request) (*database.PaginatorDTO[*dto.Asset], error) {
+	paginator, err := s.Repository.Paginate(ctx, request)
+	return typeutil.MustConvert[*database.PaginatorDTO[*dto.Asset]](paginator), errors.New(err)
 }
