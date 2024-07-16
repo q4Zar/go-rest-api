@@ -2,16 +2,16 @@ package asset
 
 import (
 	"context"
+	"log"
 	"net/http"
 	"strconv"
-	"log"
 
 	"github.com/q4Zar/go-rest-api/dto"
 	"github.com/q4Zar/go-rest-api/service"
 	"goyave.dev/filter"
-	"goyave.dev/goyave/v5/database"
 	"goyave.dev/goyave/v5"
 	"goyave.dev/goyave/v5/auth"
+	"goyave.dev/goyave/v5/database"
 	"goyave.dev/goyave/v5/util/typeutil"
 )
 
@@ -38,7 +38,7 @@ func (ctrl *Controller) Init(server *goyave.Server) {
 
 func (ctrl *Controller) RegisterRoutes(router *goyave.Router) {
 	subrouter := router.Subrouter("/assets")
-	
+	subrouter.CORS(nil) // Remove CORS options for this subrouter only
 	authRouter := subrouter.Group().SetMeta(auth.MetaAuth, true)
 	authRouter.Get("/", ctrl.Index).ValidateQuery(ctrl.IndexRequest)
 	authRouter.Post("/", ctrl.Create).ValidateBody(ctrl.CreateRequest)
@@ -47,8 +47,6 @@ func (ctrl *Controller) RegisterRoutes(router *goyave.Router) {
 }
 
 func (ctrl *Controller) Index(response *goyave.Response, request *goyave.Request) {
-	log.Println(request)
-	log.Println(response)
 	paginator, err := ctrl.AssetService.Index(request.Context(), filter.NewRequest(request.Query))
 	if response.WriteDBError(err) {
 		return
