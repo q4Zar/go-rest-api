@@ -9,10 +9,10 @@ import (
 type User struct {
 	Username  	string
 	Password  	string
-	CreatedAt 	time.Time  `json:"createdAt"`
-	UpdatedAt 	null.Time  `json:"updatedAt"`
-	Currency  	[]*Currency `gorm:"foreignKey:OwnerID"`
-	ID        	uint       `gorm:"primaryKey"`
+	CreatedAt 	time.Time		`json:"createdAt"`
+	UpdatedAt 	null.Time		`json:"updatedAt"`
+	// Currency  	[]*Currency		`gorm:"foreignKey:UserID"`
+	ID        	uint			`gorm:"primaryKey"`
 }
 
 func (User) TableName() string {

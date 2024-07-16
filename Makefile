@@ -15,3 +15,10 @@ migrate:
 
 run_scenario_1:
 	./tests.sh
+
+all:
+	make reset_db
+	sleep 4
+	make migrate
+	sleep 4
+	make run_scenario_1

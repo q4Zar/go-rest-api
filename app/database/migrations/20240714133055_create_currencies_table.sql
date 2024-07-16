@@ -6,7 +6,7 @@ CREATE TABLE currencies (
     name currency_name NOT NULL UNIQUE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NULL,
-    deleted_at TIMESTAMP WITH TIME ZONE DEFAULT NULL,
+    deleted_at TIMESTAMP WITH TIME ZONE DEFAULT NULL
 );
 
 -- migrate:down
