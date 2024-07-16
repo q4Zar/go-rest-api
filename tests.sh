@@ -39,6 +39,12 @@ echo $asset_dollar_fails_1
 # duplicate on index currency & user
 asset_dollar_fails_1=$(curl -X POST -H "Authorization: Bearer $token" -d '{"currencyID": 2, "userID": 1, "amount" : 12356.54897}' -H "Content-Type: application/json" http://127.0.0.1:8080/assets)
 echo $asset_dollar_fails_1
+
+# 4 
+echo 'get user assets'
+
+assets=$(curl -H "Authorization: Bearer $token" -H "Content-Type: application/json" http://127.0.0.1:8080/assets)
+echo $assets
 # balance_dollar=$(curl -X POST -H "Authorization: Bearer $token" -d '{"currency": "USD", "amount" : 1000}' -H "Content-Type: application/json" http://127.0.0.1:8080/balances)
 # echo $currency_dollar
 

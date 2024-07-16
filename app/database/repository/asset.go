@@ -6,8 +6,8 @@ import (
 	"github.com/q4Zar/go-rest-api/database/model"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
-	// "goyave.dev/filter"
-	// "goyave.dev/goyave/v5/database"
+	"goyave.dev/filter"
+	"goyave.dev/goyave/v5/database"
 	"goyave.dev/goyave/v5/util/errors"
 	"goyave.dev/goyave/v5/util/session"
 )
@@ -22,22 +22,22 @@ func NewAsset(db *gorm.DB) *Asset {
 	}
 }
 
-// func (r *Asset) Index(ctx context.Context, request *filter.Request) (*database.Paginator[*model.Asset], error) {
-// 	settings := &filter.Settings[*model.Asset]{
-// 		DefaultSort: []*filter.Sort{
-// 			{Field: "created_at", Order: filter.SortDescending},
-// 		},
-// 		FieldsSearch: []string{"title"},
-// 		Blacklist: filter.Blacklist{
-// 			FieldsBlacklist: []string{"deleted_at"},
-// 			Relations: map[string]*filter.Blacklist{
-// 				"Author": {IsFinal: true},
-// 			},
-// 		},
-// 	}
-// 	paginator, err := settings.Scope(session.DB(ctx, r.DB), request, &[]*model.Asset{})
-// 	return paginator, errors.New(err)
-// }
+func (r *Asset) Index(ctx context.Context, request *filter.Request) (*database.Paginator[*model.Asset], error) {
+	settings := &filter.Settings[*model.Asset]{
+		DefaultSort: []*filter.Sort{
+			{Field: "created_at", Order: filter.SortDescending},
+		},
+		// FieldsSearch: []uint{"userID"},
+		Blacklist: filter.Blacklist{
+			FieldsBlacklist: []string{"deleted_at"},
+			// Relations: map[string]*filter.Blacklist{
+				// "Author": {IsFinal: true},
+			// },
+		},
+	}
+	paginator, err := settings.Scope(session.DB(ctx, r.DB), request, &[]*model.Asset{})
+	return paginator, errors.New(err)
+}
 
 func (r *Asset) GetByID(ctx context.Context, id uint) (*model.Asset, error) {
 	var asset *model.Asset

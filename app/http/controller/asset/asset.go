@@ -8,12 +8,15 @@ import (
 
 	"github.com/q4Zar/go-rest-api/dto"
 	"github.com/q4Zar/go-rest-api/service"
+	"goyave.dev/filter"
+	"goyave.dev/goyave/v5/database"
 	"goyave.dev/goyave/v5"
 	"goyave.dev/goyave/v5/auth"
 	"goyave.dev/goyave/v5/util/typeutil"
 )
 
 type Service interface {
+	Index(ctx context.Context, request *filter.Request) (*database.PaginatorDTO[*dto.Asset], error)
 	Create(ctx context.Context, createDTO *dto.CreateAsset) error
 	Update(ctx context.Context, id uint, updateDTO *dto.UpdateAsset) error
 	Delete(ctx context.Context, id uint) error
@@ -37,11 +40,21 @@ func (ctrl *Controller) RegisterRoutes(router *goyave.Router) {
 	subrouter := router.Subrouter("/assets")
 	
 	authRouter := subrouter.Group().SetMeta(auth.MetaAuth, true)
+	authRouter.Get("/", ctrl.Index).ValidateQuery(ctrl.IndexRequest)
 	authRouter.Post("/", ctrl.Create).ValidateBody(ctrl.CreateRequest)
 	authRouter.Patch("/{assetID:[0-9]+}", ctrl.Update).ValidateBody(ctrl.UpdateRequest)
 	authRouter.Delete("/{assetID:[0-9]+}", ctrl.Delete)
 }
 
+func (ctrl *Controller) Index(response *goyave.Response, request *goyave.Request) {
+	log.Println(request)
+	log.Println(response)
+	paginator, err := ctrl.AssetService.Index(request.Context(), filter.NewRequest(request.Query))
+	if response.WriteDBError(err) {
+		return
+	}
+	response.JSON(http.StatusOK, paginator)
+}
 
 func (ctrl *Controller) Create(response *goyave.Response, request *goyave.Request) {
 	createDTO := typeutil.MustConvert[*dto.CreateAsset](request.Data)
