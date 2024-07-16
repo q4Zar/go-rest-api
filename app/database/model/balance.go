@@ -8,7 +8,7 @@ import (
 )
 
 type Balance struct {
-	CreatedAt	ime.Time
+	CreatedAt	time.Time
 	UpdatedAt	null.Time
 	DeletedAt	gorm.DeletedAt
 	Amount		float64

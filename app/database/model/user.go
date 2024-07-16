@@ -11,7 +11,7 @@ type User struct {
 	Password  	string
 	CreatedAt 	time.Time		`json:"createdAt"`
 	UpdatedAt 	null.Time		`json:"updatedAt"`
-	// Currency  	[]*Currency		`gorm:"foreignKey:UserID"`
+	Balance  	[]*Balance		`gorm:"foreignKey:UserID"`
 	ID        	uint			`gorm:"primaryKey"`
 }
 

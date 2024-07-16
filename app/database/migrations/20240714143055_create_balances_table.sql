@@ -6,7 +6,7 @@ CREATE TABLE balances (
     currency_id BIGINT REFERENCES currencies (id),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NULL,
-    deleted_at TIMESTAMP WITH TIME ZONE DEFAULT NULL
+    deleted_at TIMESTAMP WITH TIME ZONE DEFAULT NULL,
     Unique(user_id, currency_id)
 );
 
