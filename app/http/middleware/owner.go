@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 	"strconv"
+	"fmt"
 
 	"github.com/q4Zar/go-rest-api/dto"
 	"goyave.dev/goyave/v5"
@@ -32,6 +33,8 @@ func NewOwner(routeParam string, ownerService OwnerService) *Owner {
 func (m *Owner) Handle(next goyave.Handler) goyave.Handler {
 	return func(response *goyave.Response, request *goyave.Request) {
 		resourceID, err := strconv.ParseUint(request.RouteParams[m.RouteParam], 10, 64)
+		fmt.Println(resourceID)
+		fmt.Println(err)
 		if err != nil {
 			response.Status(http.StatusNotFound)
 			return

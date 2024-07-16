@@ -2,13 +2,10 @@ package repository
 
 import (
 	"context"
-	"log"
 
 	"github.com/q4Zar/go-rest-api/database/model"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
-	"goyave.dev/filter"
-	"goyave.dev/goyave/v5/database"
 	"goyave.dev/goyave/v5/util/errors"
 	"goyave.dev/goyave/v5/util/session"
 )
@@ -23,34 +20,17 @@ func NewCurrency(db *gorm.DB) *Currency {
 	}
 }
 
-func (r *Currency) Index(ctx context.Context, request *filter.Request) (*database.Paginator[*model.Currency], error) {
-	settings := &filter.Settings[*model.Currency]{
-		DefaultSort: []*filter.Sort{
-			{Field: "created_at", Order: filter.SortDescending},
-		},
-		FieldsSearch: []string{"name"},
-		Blacklist: filter.Blacklist{
-			FieldsBlacklist: []string{"deleted_at"},
-			Relations: map[string]*filter.Blacklist{
-				"Owner": {IsFinal: true},
-			},
-		},
-	}
-	paginator, err := settings.Scope(session.DB(ctx, r.DB), request, &[]*model.Currency{})
-	return paginator, errors.New(err)
-}
 
 func (r *Currency) GetByID(ctx context.Context, id uint) (*model.Currency, error) {
-	var Currency *model.Currency
-	db := session.DB(ctx, r.DB).Where("id", id).First(&Currency)
-	log.Println(Currency)
-	return Currency, errors.New(db.Error)
+	var currency *model.Currency
+	db := session.DB(ctx, r.DB).Where("id", id).First(&currency)
+	return currency, errors.New(db.Error)
 }
 
-func (r *Currency) GetBySlug(ctx context.Context, slug string) (*model.Currency, error) {
-	var Currency *model.Currency
-	db := session.DB(ctx, r.DB).Where("slug", slug).First(&Currency)
-	return Currency, errors.New(db.Error)
+func (r *Currency) GetByName(ctx context.Context, name string) (*model.Currency, error) {
+	var currency *model.Currency
+	db := session.DB(ctx, r.DB).Where("name", name).First(&currency)
+	return currency, errors.New(db.Error)
 }
 
 func (r *Currency) Create(ctx context.Context, Currency *model.Currency) (*model.Currency, error) {
@@ -69,16 +49,4 @@ func (r *Currency) Delete(ctx context.Context, id uint) error {
 		return errors.New(gorm.ErrRecordNotFound)
 	}
 	return errors.New(db.Error)
-}
-
-func (r *Currency) IsOwner(ctx context.Context, resourceID, ownerID uint) (bool, error) {
-	var one int64
-	db := session.DB(ctx, r.DB).
-		Table(model.Currency{}.TableName()).
-		Select("1").
-		Where("id", resourceID).
-		Where("owner_id", ownerID).
-		Where("deleted_at IS NULL").
-		Find(&one)
-	return one == 1, errors.New(db.Error)
 }

@@ -14,7 +14,6 @@ import (
 
 type Service interface {
 	UniqueScope() func(db *gorm.DB, val any) *gorm.DB
-	GetByID(ctx context.Context, id uint) (*dto.InternalUser, error)
 	Register(ctx context.Context, registerDTO *dto.RegisterUser) error
 	Update(ctx context.Context, id uint, updateDTO *dto.UpdateUser) error
 }
@@ -39,13 +38,7 @@ func (ctrl *Controller) RegisterRoutes(router *goyave.Router) {
 	subrouter.Post("/", ctrl.Register).ValidateBody(ctrl.RegisterRequest)
 
 	authRouter := subrouter.Group().SetMeta(auth.MetaAuth, true)
-	authRouter.Get("/profile", ctrl.ShowProfile)
 	authRouter.Patch("/", ctrl.Update).ValidateBody(ctrl.UpdateRequest)
-}
-
-func (ctrl *Controller) ShowProfile(response *goyave.Response, request *goyave.Request) {
-	userDTO := typeutil.MustConvert[*dto.User](request.User)
-	response.JSON(http.StatusOK, userDTO)
 }
 
 func (ctrl *Controller) Register(response *goyave.Response, request *goyave.Request) {

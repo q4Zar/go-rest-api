@@ -18,8 +18,8 @@ import (
 type Repository interface {
 	Create(ctx context.Context, user *model.User) (*model.User, error)
 	Update(ctx context.Context, user *model.User) (*model.User, error)
-	GetByID(ctx context.Context, id uint) (*model.User, error)
-	GetByUsername(ctx context.Context, username string) (*model.User, error)
+	FindByID(ctx context.Context, id uint) (*model.User, error)
+	FindByUsername(ctx context.Context, username string) (*model.User, error)
 	UniqueScope() func(db *gorm.DB, val any) *gorm.DB
 }
 
@@ -45,16 +45,16 @@ func (s *Service) UniqueScope() func(db *gorm.DB, val any) *gorm.DB {
 	return s.Repository.UniqueScope()
 }
 
-func (s *Service) GetByID(ctx context.Context, id uint) (*dto.InternalUser, error) {
-	user, err := s.Repository.GetByID(ctx, id)
+func (s *Service) FindByID(ctx context.Context, id uint) (*dto.User, error) {
+	user, err := s.Repository.FindByID(ctx, id)
 	if err != nil {
 		return nil, errors.New(err)
 	}
-	return typeutil.MustConvert[*dto.InternalUser](user), nil
+	return typeutil.MustConvert[*dto.User](user), nil
 }
 
 func (s *Service) FindByUsername(ctx context.Context, username any) (*dto.InternalUser, error) {
-	user, err := s.Repository.GetByUsername(ctx, fmt.Sprintf("%v", username))
+	user, err := s.Repository.FindByUsername(ctx, fmt.Sprintf("%v", username))
 	if err != nil {
 		return nil, errors.New(err)
 	}
@@ -81,7 +81,7 @@ func (s *Service) Register(ctx context.Context, registerDTO *dto.RegisterUser) e
 func (s *Service) Update(ctx context.Context, id uint, updateDTO *dto.UpdateUser) error {
 	err := s.Session.Transaction(ctx, func(ctx context.Context) error {
 		var err error
-		user, err := s.Repository.GetByID(ctx, id)
+		user, err := s.Repository.FindByID(ctx, id)
 		if err != nil {
 			return errors.New(err)
 		}

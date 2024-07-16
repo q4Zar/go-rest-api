@@ -8,23 +8,16 @@ import (
 )
 
 type Currency struct {
-	Owner		*User `json:"owner,omitempty"`
-
+	ID        	uint		`json:"id"`
+	Name		string		`json:"name"`
 	CreatedAt	time.Time	`json:"createdAt"`
 	UpdatedAt	null.Time	`json:"updatedAt"`
-	Name		string		`json:"name"`
-	Amount		uint		`json:"amount"`
-	OwnerID 	uint		`json:"ownerID"`
-	ID        	uint		`json:"id"`
 }
 
 type CreateCurrency struct {
 	Name    	string		`json:"name"`
-	Amount		uint		`json:"amount"`
-	OwnerID 	uint		`json:"ownerID"`
 }
 
 type UpdateCurrency struct {
 	Name    	typeutil.Undefined[string]	`json:"name"`
-	Amount		typeutil.Undefined[uint]	`json:"amount"`
 }

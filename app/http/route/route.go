@@ -10,7 +10,6 @@ import (
 	"goyave.dev/goyave/v5/cors"
 	"goyave.dev/goyave/v5/log"
 	"goyave.dev/goyave/v5/middleware/parse"
-	// "goyave.dev/openapi3"
 )
 
 func Register(server *goyave.Server, router *goyave.Router) {
