@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/q4Zar/go-rest-api/database/model"
+	// "github.com/q4Zar/go-rest-api/dto"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 	"goyave.dev/filter"
@@ -31,7 +32,7 @@ func (r *Asset) Index(ctx context.Context, request *filter.Request) (*database.P
 		Blacklist: filter.Blacklist{
 			FieldsBlacklist: []string{"deleted_at"},
 			// Relations: map[string]*filter.Blacklist{
-				// "Author": {IsFinal: true},
+			// "Author": {IsFinal: true},
 			// },
 		},
 	}
@@ -67,4 +68,10 @@ func (r *Asset) Delete(ctx context.Context, id uint) error {
 		return errors.New(gorm.ErrRecordNotFound)
 	}
 	return errors.New(db.Error)
+}
+
+func (r *Asset) Paginate(ctx context.Context, request *filter.Request) (*database.Paginator[*model.Asset], error) {
+	assets := []*model.Asset{}
+	paginator, err := filter.Scope(session.DB(ctx, r.DB), request, &assets)
+	return paginator, errors.New(err)
 }

@@ -22,6 +22,7 @@ type Repository interface {
 	Create(ctx context.Context, asset *model.Asset) (*model.Asset, error)
 	Update(ctx context.Context, asset *model.Asset) (*model.Asset, error)
 	Delete(ctx context.Context, id uint) error
+	Paginate(ctx context.Context, request *filter.Request) (*database.Paginator[*model.Asset], error)
 }
 
 type Service struct {
@@ -73,4 +74,9 @@ func (s *Service) Delete(ctx context.Context, id uint) error {
 
 func (s *Service) Name() string {
 	return service.Asset
+}
+
+func (s *Service) Paginate(ctx context.Context, request *filter.Request) (*database.Paginator[*model.Asset], error) {
+	paginator, err := s.Repository.Paginate(ctx, request)
+	return typeutil.MustConvert[*database.Paginator[*model.Asset]](paginator), errors.New(err)
 }

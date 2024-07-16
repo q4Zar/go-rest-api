@@ -20,6 +20,7 @@ type Service interface {
 	Create(ctx context.Context, createDTO *dto.CreateAsset) error
 	Update(ctx context.Context, id uint, updateDTO *dto.UpdateAsset) error
 	Delete(ctx context.Context, id uint) error
+	Paginate(ctx context.Context, request *filter.Request) (*database.Paginator[*dto.Asset], error)
 }
 
 type Controller struct {
@@ -46,8 +47,16 @@ func (ctrl *Controller) RegisterRoutes(router *goyave.Router) {
 	authRouter.Delete("/{assetID:[0-9]+}", ctrl.Delete)
 }
 
+// func (ctrl *Controller) Index(response *goyave.Response, request *goyave.Request) {
+// 	paginator, err := ctrl.AssetService.Index(request.Context(), filter.NewRequest(request.Query))
+// 	if response.WriteDBError(err) {
+// 		return
+// 	}
+// 	response.JSON(http.StatusOK, paginator)
+// }
+
 func (ctrl *Controller) Index(response *goyave.Response, request *goyave.Request) {
-	paginator, err := ctrl.AssetService.Index(request.Context(), filter.NewRequest(request.Query))
+	paginator, err := ctrl.AssetService.Paginate(request.Context(), filter.NewRequest(request.Query))
 	if response.WriteDBError(err) {
 		return
 	}
