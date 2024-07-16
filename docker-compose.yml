@@ -12,6 +12,14 @@ services:
     ports:
       - '55432:5432'
     restart: on-failure
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -d postgres://$$DB_USER:$$DB_PASS@localhost:5432/$$DB_NAME"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    # networks:
+    #   - default
+
 
   # go-api:
   #   build:
@@ -21,10 +29,14 @@ services:
   #   ports:
   #     - "8080:8080"
   #   depends_on:
-  #     - postgres
+  #     postgres:
+  #       condition: service_healthy
   #   restart: on-failure
+    # networks:
+    #   - default
 
-networks:
-  default:
-    name: goyave-backend
-    external: true
+# networks:
+#   default:
+#     name: goyave-backend
+#     external: true
+#     driver: bridge
