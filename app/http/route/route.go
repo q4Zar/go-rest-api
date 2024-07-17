@@ -2,7 +2,6 @@ package route
 
 import (
 	"github.com/q4Zar/go-rest-api/http/controller/asset"
-	"github.com/q4Zar/go-rest-api/http/controller/currency"
 	"github.com/q4Zar/go-rest-api/http/controller/user"
 	"github.com/q4Zar/go-rest-api/service"
 	userservice "github.com/q4Zar/go-rest-api/service/user"
@@ -29,5 +28,4 @@ func Register(server *goyave.Server, router *goyave.Router) {
 	router.Controller(loginController)
 	router.Controller(asset.NewController())
 	router.Controller(user.NewController())
-	router.Controller(currency.NewController())
 }

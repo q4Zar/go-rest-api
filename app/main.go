@@ -8,14 +8,13 @@ import (
 	// seeders "github.com/q4Zar/go-rest-api/database/seed"
 	"github.com/q4Zar/go-rest-api/http/route"
 	"github.com/q4Zar/go-rest-api/service/asset"
-	"github.com/q4Zar/go-rest-api/service/currency"
 	"github.com/q4Zar/go-rest-api/service/user"
 
 	"goyave.dev/goyave/v5"
 	"goyave.dev/goyave/v5/config"
+	_ "goyave.dev/goyave/v5/database/dialect/postgres"
 	"goyave.dev/goyave/v5/util/errors"
 	"goyave.dev/goyave/v5/util/session"
-	_ "goyave.dev/goyave/v5/database/dialect/postgres"
 )
 
 func main() {
@@ -29,7 +28,6 @@ func main() {
 	opts := goyave.Options{
 		Config: cfg,
 	}
-
 
 	server, err := goyave.New(opts)
 	if err != nil {
@@ -66,9 +64,7 @@ func registerServices(server *goyave.Server) {
 
 	userRepo := repository.NewUser(server.DB())
 	assetRepo := repository.NewAsset(server.DB())
-	currencyRepo := repository.NewCurrency(server.DB())
 
 	server.RegisterService(user.NewService(session, server.Logger, userRepo))
 	server.RegisterService(asset.NewService(session, assetRepo))
-	server.RegisterService(currency.NewService(session, currencyRepo))
 }

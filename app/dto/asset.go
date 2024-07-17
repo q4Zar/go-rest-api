@@ -5,18 +5,18 @@ import (
 )
 
 type Asset struct {
-	Amount     float64 `json:"amount,omitempty"`
-	CurrencyID uint    `json:"currencyID,omitempty"`
-	UserID     uint    `json:"authorID,omitempty"`
-	ID         uint    `json:"id,omitempty"`
+	Balance   float64 `json:"balance"`
+	AssetType string  `json:"assetType"`
+	UserID    uint    `json:"userID"`
+	ID        uint    `json:"id"`
 }
 
 type CreateAsset struct {
-	Amount     float64 `json:"amount"`
-	CurrencyID uint    `json:"currencyID"`
-	UserID     uint    `json:"userID"`
+	Balance   float64 `json:"balance"`
+	AssetType string  `json:"assetType"`
+	UserID    uint    `json:"userID"`
 }
 
 type UpdateAsset struct {
-	Amount typeutil.Undefined[float64] `json:"amount"`
+	Balance typeutil.Undefined[float64] `json:"balance"`
 }

@@ -34,7 +34,7 @@ func (r *Asset) Index(ctx context.Context, request *filter.Request) (*database.P
 		},
 		// FieldsSearch: []string{"title"},
 		Blacklist: filter.Blacklist{
-			FieldsBlacklist: []string{"deleted_at", "created_at", "updated_at"},
+			FieldsBlacklist: []string{"deleted_at"},
 			// Relations: map[string]*filter.Blacklist{
 			// 	"Author": {IsFinal: true},
 			// },

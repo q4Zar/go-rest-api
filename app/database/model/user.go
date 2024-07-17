@@ -7,12 +7,12 @@ import (
 )
 
 type User struct {
-	Username  	string
-	Password  	string
-	CreatedAt 	time.Time		`json:"createdAt"`
-	UpdatedAt 	null.Time		`json:"updatedAt"`
-	Asset  		[]*Asset		`gorm:"foreignKey:UserID"`
-	ID        	uint			`gorm:"primaryKey"`
+	Username  string
+	Password  string
+	CreatedAt time.Time `json:"createdAt"`
+	UpdatedAt null.Time `json:"updatedAt"`
+	Asset     []*Asset  `gorm:"foreignKey:UserID"`
+	ID        uint      `gorm:"primaryKey"`
 }
 
 func (User) TableName() string {
