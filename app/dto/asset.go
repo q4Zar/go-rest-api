@@ -5,10 +5,10 @@ import (
 )
 
 type Asset struct {
-	Balance   float64 `json:"balance"`
-	AssetType string  `json:"assetType"`
-	UserID    uint    `json:"userID"`
-	ID        uint    `json:"id"`
+	Balance   float64 `json:"balance,omitempty"`
+	AssetType string  `json:"assetType,omitempty"`
+	UserID    uint    `json:"userID,omitempty"`
+	ID        uint    `json:"id,omitempty"`
 }
 
 type CreateAsset struct {

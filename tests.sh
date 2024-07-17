@@ -30,6 +30,6 @@ echo $asset_dollar_fails_1
 # 4 
 # echo 'get user assets'
 
-assets=$(curl -H "Authorization: Bearer $token" "http://127.0.0.1:8080/assets?fields=balance,asset_type,user_id,id")
+assets=$(curl -H "Authorization: Bearer $token" "http://127.0.0.1:8080/assets?fields=balance,asset_type")
 echo "$assets" | jq '.'
     
