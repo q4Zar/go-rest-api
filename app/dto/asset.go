@@ -16,11 +16,6 @@ type Asset struct {
 	ID         uint      `json:"id"`
 }
 
-type IndexAsset struct {
-	Amount     float64 `json:"amount"`
-	CurrencyID uint    `json:"currencyID"`
-}
-
 type CreateAsset struct {
 	Amount     float64 `json:"amount"`
 	CurrencyID uint    `json:"currencyID"`
