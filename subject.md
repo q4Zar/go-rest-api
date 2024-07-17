@@ -53,7 +53,7 @@ The idea is to create a REST API that allows users to deposit, withdraw assets (
 - WIP
   - 
 
----`
+---
 
 #### 3. Orders & Trading
 
@@ -90,5 +90,9 @@ The idea is to create a REST API that allows users to deposit, withdraw assets (
       - iterate through queue to see if there is a matching offer
         - update balance of owner
           - update status of order as finalize
+
+---
+
+
 
 ---

@@ -13,9 +13,9 @@ import (
 
 	"goyave.dev/goyave/v5"
 	"goyave.dev/goyave/v5/config"
+	_ "goyave.dev/goyave/v5/database/dialect/postgres"
 	"goyave.dev/goyave/v5/util/errors"
 	"goyave.dev/goyave/v5/util/session"
-	_ "goyave.dev/goyave/v5/database/dialect/postgres"
 )
 
 func main() {
@@ -29,7 +29,6 @@ func main() {
 	opts := goyave.Options{
 		Config: cfg,
 	}
-
 
 	server, err := goyave.New(opts)
 	if err != nil {

@@ -16,7 +16,8 @@ import (
 )
 
 type Service interface {
-	Index(ctx context.Context, request *filter.Request) (*database.PaginatorDTO[*dto.Asset], error)
+	First(ctx context.Context, id uint) (*dto.Asset, error)
+	Paginate(ctx context.Context, request *filter.Request) (*database.PaginatorDTO[*dto.Asset], error)
 	Create(ctx context.Context, createDTO *dto.CreateAsset) error
 	Update(ctx context.Context, id uint, updateDTO *dto.UpdateAsset) error
 	Delete(ctx context.Context, id uint) error
@@ -47,7 +48,7 @@ func (ctrl *Controller) RegisterRoutes(router *goyave.Router) {
 }
 
 func (ctrl *Controller) Index(response *goyave.Response, request *goyave.Request) {
-	paginator, err := ctrl.AssetService.Index(request.Context(), filter.NewRequest(request.Query))
+	paginator, err := ctrl.AssetService.Paginate(request.Context(), filter.NewRequest(request.Query))
 	if response.WriteDBError(err) {
 		return
 	}
