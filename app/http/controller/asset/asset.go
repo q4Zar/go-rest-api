@@ -40,7 +40,7 @@ func (ctrl *Controller) RegisterRoutes(router *goyave.Router) {
 	subrouter := router.Subrouter("/assets")
 	subrouter.CORS(nil) // Remove CORS options for this subrouter only
 	authRouter := subrouter.Group().SetMeta(auth.MetaAuth, true)
-	authRouter.Get("/", ctrl.Index).ValidateQuery(ctrl.IndexRequest)
+	authRouter.Get("/", ctrl.Index).ValidateQuery(filter.Validation)
 	authRouter.Post("/", ctrl.Create).ValidateBody(ctrl.CreateRequest)
 	authRouter.Patch("/{assetID:[0-9]+}", ctrl.Update).ValidateBody(ctrl.UpdateRequest)
 	authRouter.Delete("/{assetID:[0-9]+}", ctrl.Delete)
