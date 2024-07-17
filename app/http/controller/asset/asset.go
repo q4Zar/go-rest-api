@@ -16,7 +16,7 @@ import (
 )
 
 type Service interface {
-	Index(ctx context.Context, request *filter.Request) (*database.PaginatorDTO[*dto.Asset], error)
+	Index(ctx context.Context, request *filter.Request) (*database.PaginatorDTO[*dto.IndexAsset], error)
 	Create(ctx context.Context, createDTO *dto.CreateAsset) error
 	Update(ctx context.Context, id uint, updateDTO *dto.UpdateAsset) error
 	Delete(ctx context.Context, id uint) error

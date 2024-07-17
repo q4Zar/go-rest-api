@@ -43,7 +43,7 @@ echo $asset_dollar_fails_1
 # 4 
 echo 'get user assets'
 
-assets=$(curl -H "Authorization: Bearer $token" "http://127.0.0.1:8080/assets?fields=amount,currencyID")
+assets=$(curl -H "Authorization: Bearer $token" "http://127.0.0.1:8080/assets")
 echo "$assets" | jq '.'
 # balance_dollar=$(curl -X POST -H "Authorization: Bearer $token" -d '{"currency": "USD", "amount" : 1000}' -H "Content-Type: application/json" http://127.0.0.1:8080/balances)
 # echo $currency_dollar

@@ -36,12 +36,12 @@ func NewService(session session.Session, repository Repository) *Service {
 	}
 }
 
-func (s *Service) Index(ctx context.Context, request *filter.Request) (*database.PaginatorDTO[*dto.Asset], error) {
+func (s *Service) Index(ctx context.Context, request *filter.Request) (*database.PaginatorDTO[*dto.IndexAsset], error) {
 	paginator, err := s.Repository.Index(ctx, request)
 	if err != nil {
 		return nil, errors.New(err)
 	}
-	return typeutil.MustConvert[*database.PaginatorDTO[*dto.Asset]](paginator), nil
+	return typeutil.MustConvert[*database.PaginatorDTO[*dto.IndexAsset]](paginator), nil
 }
 
 func (s *Service) Create(ctx context.Context, createDTO *dto.CreateAsset) error {

@@ -24,6 +24,11 @@ func NewAsset(db *gorm.DB) *Asset {
 
 func (r *Asset) Index(ctx context.Context, request *filter.Request) (*database.Paginator[*model.Asset], error) {
 	settings := &filter.Settings[*model.Asset]{
+		DisableFields: false, // Prevent usage of "fields"
+		DisableFilter: false, // Prevent usage of "filter"
+		DisableSort:   false, // Prevent usage of "sort"
+		DisableJoin:   false, // Prevent usage of "join"
+
 		DefaultSort: []*filter.Sort{
 			{Field: "created_at", Order: filter.SortDescending},
 		},
