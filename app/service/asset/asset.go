@@ -22,6 +22,7 @@ type Repository interface {
 	Create(ctx context.Context, asset *model.Asset) (*model.Asset, error)
 	Update(ctx context.Context, asset *model.Asset) (*model.Asset, error)
 	Delete(ctx context.Context, id uint) error
+	IsOwner(ctx context.Context, resourceID, ownerID uint) (bool, error)
 }
 
 type Service struct {
@@ -69,6 +70,10 @@ func (s *Service) Update(ctx context.Context, id uint, updateDTO *dto.UpdateAsse
 
 func (s *Service) Delete(ctx context.Context, id uint) error {
 	return s.Repository.Delete(ctx, id)
+}
+
+func (s *Service) IsOwner(ctx context.Context, resourceID, ownerID uint) (bool, error) {
+	return s.Repository.IsOwner(ctx, resourceID, ownerID)
 }
 
 func (s *Service) Name() string {

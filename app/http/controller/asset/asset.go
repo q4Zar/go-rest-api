@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	"github.com/q4Zar/go-rest-api/dto"
+	"github.com/q4Zar/go-rest-api/http/middleware"
 	"github.com/q4Zar/go-rest-api/service"
 	"goyave.dev/filter"
 	"goyave.dev/goyave/v5"
@@ -20,6 +21,7 @@ type Service interface {
 	Create(ctx context.Context, createDTO *dto.CreateAsset) error
 	Update(ctx context.Context, id uint, updateDTO *dto.UpdateAsset) error
 	Delete(ctx context.Context, id uint) error
+	IsOwner(ctx context.Context, resourceID, ownerID uint) (bool, error)
 }
 
 type Controller struct {
@@ -38,12 +40,16 @@ func (ctrl *Controller) Init(server *goyave.Server) {
 
 func (ctrl *Controller) RegisterRoutes(router *goyave.Router) {
 	subrouter := router.Subrouter("/assets")
-	subrouter.CORS(nil) // Remove CORS options for this subrouter only
+
 	authRouter := subrouter.Group().SetMeta(auth.MetaAuth, true)
-	authRouter.Get("/", ctrl.Index).ValidateQuery(filter.Validation)
 	authRouter.Post("/", ctrl.Create).ValidateBody(ctrl.CreateRequest)
-	authRouter.Patch("/{assetID:[0-9]+}", ctrl.Update).ValidateBody(ctrl.UpdateRequest)
-	authRouter.Delete("/{assetID:[0-9]+}", ctrl.Delete)
+	authRouter.Get("/", ctrl.Index).ValidateQuery(filter.Validation)
+
+	ownedRouter := authRouter.Group()
+	ownerMiddleware := middleware.NewOwner("assetD", ctrl.AssetService)
+	ownedRouter.Middleware(ownerMiddleware)
+	ownedRouter.Patch("/{assetID:[0-9]+}", ctrl.Update).ValidateBody(ctrl.UpdateRequest)
+	ownedRouter.Delete("/{assetID:[0-9]+}", ctrl.Delete)
 }
 
 func (ctrl *Controller) Index(response *goyave.Response, request *goyave.Request) {
@@ -56,7 +62,7 @@ func (ctrl *Controller) Index(response *goyave.Response, request *goyave.Request
 
 func (ctrl *Controller) Create(response *goyave.Response, request *goyave.Request) {
 	createDTO := typeutil.MustConvert[*dto.CreateAsset](request.Data)
-
+	createDTO.UserID = request.User.(*dto.InternalUser).ID
 	err := ctrl.AssetService.Create(request.Context(), createDTO)
 	if err != nil {
 		response.Error(err)

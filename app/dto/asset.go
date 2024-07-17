@@ -5,6 +5,8 @@ import (
 )
 
 type Asset struct {
+	User *User `json:"owner,omitempty"`
+
 	Balance   float64 `json:"balance,omitempty"`
 	AssetType string  `json:"assetType,omitempty"`
 	UserID    uint    `json:"userID,omitempty"`

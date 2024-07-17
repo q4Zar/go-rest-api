@@ -35,9 +35,9 @@ func (r *Asset) Index(ctx context.Context, request *filter.Request) (*database.P
 		// FieldsSearch: []string{"title"},
 		Blacklist: filter.Blacklist{
 			FieldsBlacklist: []string{"deleted_at"},
-			// Relations: map[string]*filter.Blacklist{
-			// 	"Author": {IsFinal: true},
-			// },
+			Relations: map[string]*filter.Blacklist{
+				"User": {IsFinal: true},
+			},
 		},
 	}
 	paginator, err := settings.Scope(session.DB(ctx, r.DB), request, &[]*model.Asset{})
@@ -66,4 +66,16 @@ func (r *Asset) Delete(ctx context.Context, id uint) error {
 		return errors.New(gorm.ErrRecordNotFound)
 	}
 	return errors.New(db.Error)
+}
+
+func (r *Asset) IsOwner(ctx context.Context, resourceID, ownerID uint) (bool, error) {
+	var one int64
+	db := session.DB(ctx, r.DB).
+		Table(model.Asset{}.TableName()).
+		Select("1").
+		Where("id", resourceID).
+		Where("author_id", ownerID).
+		Where("deleted_at IS NULL").
+		Find(&one)
+	return one == 1, errors.New(db.Error)
 }

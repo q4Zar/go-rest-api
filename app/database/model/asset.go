@@ -15,6 +15,8 @@ const (
 )
 
 type Asset struct {
+	User *User
+
 	CreatedAt time.Time
 	UpdatedAt null.Time
 	DeletedAt gorm.DeletedAt

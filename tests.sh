@@ -12,19 +12,19 @@ echo $token
 echo 'creates assets'
 
 ## EUR
-asset_euro_success=$(curl -X POST -H "Authorization: Bearer $token" -d '{"assetType": "EUR", "userID": 1, "balance" : 12356.54897}' -H "Content-Type: application/json" http://127.0.0.1:8080/assets)
+asset_euro_success=$(curl -X POST -H "Authorization: Bearer $token" -d '{"assetType": "EUR", "balance" : 12356.54897}' -H "Content-Type: application/json" http://127.0.0.1:8080/assets)
 echo $asset_euro_success
 
 ### duplicate on index currency & user
-asset_euro_fails_2=$(curl -X POST -H "Authorization: Bearer $token" -d '{"assetType": "EUR", "userID": 1, "balance" : 22356.54897}' -H "Content-Type: application/json" http://127.0.0.1:8080/assets)
+asset_euro_fails_2=$(curl -X POST -H "Authorization: Bearer $token" -d '{"assetType": "EUR", "balance" : 22356.54897}' -H "Content-Type: application/json" http://127.0.0.1:8080/assets)
 echo $asset_euro_fails_2
 
 ##USD
-asset_dollar_success=$(curl -X POST -H "Authorization: Bearer $token" -d '{"assetType": "USD", "userID": 1, "balance" : 12356.54897}' -H "Content-Type: application/json" http://127.0.0.1:8080/assets)
+asset_dollar_success=$(curl -X POST -H "Authorization: Bearer $token" -d '{"assetType": "USD", "balance" : 12356.54897}' -H "Content-Type: application/json" http://127.0.0.1:8080/assets)
 echo $asset_dollar_success
 
 # ### duplicate on index currency & user
-asset_dollar_fails_1=$(curl -X POST -H "Authorization: Bearer $token" -d '{"assetType": "USD", "userID": 1, "balance" : 22356.54897}' -H "Content-Type: application/json" http://127.0.0.1:8080/assets)
+asset_dollar_fails_1=$(curl -X POST -H "Authorization: Bearer $token" -d '{"assetType": "USD", "balance" : 22356.54897}' -H "Content-Type: application/json" http://127.0.0.1:8080/assets)
 echo $asset_dollar_fails_1
 
 # 4 
