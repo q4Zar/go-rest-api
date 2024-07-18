@@ -1,6 +1,6 @@
 module github.com/q4Zar/go-rest-api
 
-go 1.21.11
+go 1.22.5
 
 require (
 	github.com/Code-Hex/uniseg v0.2.0 // indirect
@@ -38,5 +38,4 @@ require (
 	goyave.dev/filter v0.7.0 // indirect
 	goyave.dev/goyave/v4 v4.4.11 // indirect
 	goyave.dev/goyave/v5 v5.1.1 // indirect
-	goyave.dev/openapi3 v0.3.0 // indirect
 )
