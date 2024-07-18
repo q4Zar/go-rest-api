@@ -15,9 +15,6 @@ import (
 	"goyave.dev/goyave/v5/util/typeutil"
 )
 
-// func init() {
-// }
-
 // OrderChannels holds the channels for buy and sell orders
 type OrderChannels struct {
 	Buy  chan *model.Order
@@ -54,12 +51,12 @@ func NewService(session session.Session, repository Repository) *Service {
 func (s *Service) initChannels() {
 	fmt.Println("initChannels")
 	s.channels["EUR-USD"] = OrderChannels{
-		Buy:  make(chan *model.Order),
-		Sell: make(chan *model.Order),
+		Buy:  make(chan *model.Order, 100),
+		Sell: make(chan *model.Order, 100),
 	}
 	s.channels["USD-EUR"] = OrderChannels{
-		Buy:  make(chan *model.Order),
-		Sell: make(chan *model.Order),
+		Buy:  make(chan *model.Order, 100),
+		Sell: make(chan *model.Order, 100),
 	}
 	go s.matchOrders("EUR-USD")
 	go s.matchOrders("USD-EUR")
@@ -76,9 +73,12 @@ func (s *Service) Index(ctx context.Context, request *filter.Request) (*database
 func (s *Service) Create(ctx context.Context, createDTO *dto.CreateOrder) error {
 	order := typeutil.Copy(&model.Order{}, createDTO)
 	order, err := s.Repository.Create(ctx, order)
+	if err != nil {
+		return errors.New(err)
+	}
 	// add order into channelSide : Buy|Sell
 	s.addOrderToMatching(order)
-	return errors.New(err)
+	return nil
 }
 
 func (s *Service) Delete(ctx context.Context, id uint) error {
@@ -106,7 +106,6 @@ func (s *Service) addOrderToMatching(order *model.Order) {
 		fmt.Println("SELL", order)
 		s.channels[order.AssetPair].Sell <- order
 	}
-	fmt.Println("No Case :/")
 }
 
 func (s *Service) matchOrders(pair string) {

@@ -43,5 +43,5 @@ echo $order_buy_usdeur
 order_buy_usdeur=$(curl -X POST -H "Authorization: Bearer $token" -d '{"amount": 1000, "price" : 1.2, "side":"SELL", "assetPair" : "USD-EUR"}' -H "Content-Type: application/json" http://127.0.0.1:8080/orders)
 echo $order_sell_usdeur
 
-order_buy_usdeur=$(curl -X POST -H "Authorization: Bearer $token" -d '{"amount": 1000, "price" : 1.2, "side":"SELL", "assetPair" : "USD-EUR"}' -H "Content-Type: application/json" http://127.0.0.1:8080/orders)
-echo $order_sell_usdeur
+# order_buy_usdeur=$(curl -X POST -H "Authorization: Bearer $token" -d '{"amount": 1000, "price" : 1.2, "side":"SELL", "assetPair" : "USD-EUR"}' -H "Content-Type: application/json" http://127.0.0.1:8080/orders)
+# echo $order_sell_usdeur
