@@ -1,42 +1,25 @@
-
 services:
-
   postgres:
-    image: postgres:16
-    env_file:
-      - .env
+    image: postgres:latest
     environment:
       POSTGRES_DB: ${DB_NAME}
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASS}
     ports:
-      - '55432:5432'
+      - '127.0.0.1:5432:5432'
     restart: on-failure
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -d postgres://$$DB_USER:$$DB_PASS@localhost:5432/$$DB_NAME"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-    # networks:
-    #   - default
 
-
-  # go-api:
-  #   build:
-  #     context: ./app
-  #   env_file:
-  #     - .env
-  #   ports:
-  #     - "8080:8080"
-  #   depends_on:
-  #     postgres:
-  #       condition: service_healthy
-  #   restart: on-failure
-    # networks:
-    #   - default
-
-# networks:
-#   default:
-#     name: goyave-backend
-#     external: true
-#     driver: bridge
+  go-api:
+    image: golang:1.22
+    working_dir: /app
+    volumes:
+    - ./app:/app
+    ports:
+      - "127.0.0.1:8080:8080"
+    command: ["go", "run", "."]
+    depends_on:
+      - postgres
+    restart: on-failure
+networks:
+  default:
+    name: goyave-backend
