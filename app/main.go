@@ -69,5 +69,5 @@ func registerServices(server *goyave.Server) {
 
 	server.RegisterService(user.NewService(session, server.Logger, userRepo))
 	server.RegisterService(asset.NewService(session, assetRepo))
-	server.RegisterService(order.NewService(session, orderRepo))
+	server.RegisterService(order.NewService(session, orderRepo, assetRepo))
 }

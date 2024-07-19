@@ -30,18 +30,25 @@ type Repository interface {
 	IsOwner(ctx context.Context, resourceID, ownerID uint) (bool, error)
 }
 
-type Service struct {
-	Session    session.Session
-	Repository Repository
-	mu         sync.Mutex
-	channels   map[string]OrderChannels
+type AssetRepository interface {
+	GetByUserIDAndType(ctx context.Context, userID uint, assetType string) (*model.Asset, error)
+	Update(ctx context.Context, asset *model.Asset) (*model.Asset, error)
 }
 
-func NewService(session session.Session, repository Repository) *Service {
+type Service struct {
+	Session         session.Session
+	Repository      Repository
+	AssetRepository AssetRepository
+	mu              sync.Mutex
+	channels        map[string]OrderChannels
+}
+
+func NewService(session session.Session, repository Repository, assetRepository AssetRepository) *Service {
 	service := &Service{
-		Session:    session,
-		Repository: repository,
-		channels:   make(map[string]OrderChannels),
+		Session:         session,
+		Repository:      repository,
+		AssetRepository: assetRepository,
+		channels:        make(map[string]OrderChannels),
 	}
 	service.initChannels()
 	return service
@@ -49,7 +56,6 @@ func NewService(session session.Session, repository Repository) *Service {
 
 // initChannels initializes the buy and sell channels for order matching
 func (s *Service) initChannels() {
-	fmt.Println("initChannels")
 	s.channels["EUR-USD"] = OrderChannels{
 		Buy:  make(chan *model.Order, 100),
 		Sell: make(chan *model.Order, 100),
@@ -71,12 +77,55 @@ func (s *Service) Index(ctx context.Context, request *filter.Request) (*database
 }
 
 func (s *Service) Create(ctx context.Context, createDTO *dto.CreateOrder) error {
+	// Determine asset types based on order side and asset pair
+	var assetTypeToCheck string
+	var requiredAmount float64
+	switch createDTO.AssetPair {
+	case "EUR-USD":
+		if createDTO.Side == "BUY" {
+			assetTypeToCheck = "EUR"
+			requiredAmount = createDTO.Amount
+		} else if createDTO.Side == "SELL" {
+			assetTypeToCheck = "USD"
+			requiredAmount = createDTO.Amount
+		}
+	case "USD-EUR":
+		if createDTO.Side == "BUY" {
+			assetTypeToCheck = "USD"
+			requiredAmount = createDTO.Amount
+		} else if createDTO.Side == "SELL" {
+			assetTypeToCheck = "EUR"
+			requiredAmount = createDTO.Amount
+		}
+	default:
+		return errors.New("unsupported asset pair")
+	}
+
+	// Fetch the user's balance for the determined asset type
+	balance, err := GetBalance(ctx, s.AssetRepository, createDTO.UserID, assetTypeToCheck)
+	if err != nil {
+		return errors.New(fmt.Sprintf("could not get balance: %v", err))
+	}
+
+	// Check if the user has enough balance
+	if createDTO.Side == "BUY" {
+		if requiredAmount < balance {
+			return errors.New("insufficient balance to complete the purchase")
+		}
+	} else if createDTO.Side == "SELL" {
+		if requiredAmount < balance {
+			return errors.New("insufficient balance to complete the sale")
+		}
+	}
+
+	// Proceed to create the order
 	order := typeutil.Copy(&model.Order{}, createDTO)
-	order, err := s.Repository.Create(ctx, order)
+	order, err = s.Repository.Create(ctx, order)
 	if err != nil {
 		return errors.New(err)
 	}
-	// add order into channelSide : Buy|Sell
+
+	// Add the order to the matching process
 	s.addOrderToMatching(order)
 	return nil
 }
@@ -94,22 +143,18 @@ func (s *Service) Name() string {
 }
 
 func (s *Service) addOrderToMatching(order *model.Order) {
-	fmt.Println("addOrderToMatching")
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
 	switch order.Side {
 	case "BUY":
-		fmt.Println("BUY", order)
 		s.channels[order.AssetPair].Buy <- order
 	case "SELL":
-		fmt.Println("SELL", order)
 		s.channels[order.AssetPair].Sell <- order
 	}
 }
 
 func (s *Service) matchOrders(pair string) {
-	fmt.Println("matchOrders")
 	for {
 		select {
 		case buyOrder := <-s.channels[pair].Buy:
@@ -121,17 +166,16 @@ func (s *Service) matchOrders(pair string) {
 }
 
 func (s *Service) processOrder(order *model.Order, oppositeSide string) {
-	fmt.Println("processOrder")
+	// fmt.Println("processOrder")
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
 	oppositeOrders := s.channels[order.AssetPair]
 	var oppositeChan chan *model.Order
 	if oppositeSide == "BUY" {
-		fmt.Println("oppositeSide", "BUY")
+
 		oppositeChan = oppositeOrders.Buy
 	} else {
-		fmt.Println("oppositeSide", "SELL")
 		oppositeChan = oppositeOrders.Sell
 	}
 
@@ -151,8 +195,16 @@ func (s *Service) processOrder(order *model.Order, oppositeSide string) {
 					fmt.Printf("Failed to update order status: %v\n", err)
 				}
 
-				// Simulate balance update (you will need to implement this)
+				// Update user balances
 				fmt.Printf("Updating balances for users %d and %d\n", order.UserID, oppositeOrder.UserID)
+				if err := UpdateBalance(context.Background(), s.AssetRepository, order.UserID, "EUR", -order.Amount); err != nil {
+					fmt.Printf("Failed to update balance for user %d: %v\n", order.UserID, err)
+					fmt.Println(8)
+				}
+				if err := UpdateBalance(context.Background(), s.AssetRepository, oppositeOrder.UserID, "USD", order.Amount); err != nil {
+					fmt.Printf("Failed to update balance for user %d: %v\n", oppositeOrder.UserID, err)
+					fmt.Println(9)
+				}
 
 				return
 			} else {
@@ -169,4 +221,34 @@ func (s *Service) processOrder(order *model.Order, oppositeSide string) {
 			return
 		}
 	}
+}
+
+func UpdateBalance(ctx context.Context, repo AssetRepository, userID uint, assetType string, amount float64) error {
+	asset, err := repo.GetByUserIDAndType(ctx, userID, assetType)
+	if err != nil {
+		return fmt.Errorf("could not get asset: %w", err)
+	}
+	if asset == nil {
+		return fmt.Errorf("asset not found for user %d and type %s", userID, assetType)
+	}
+
+	asset.Balance += amount
+	if _, err := repo.Update(ctx, asset); err != nil {
+		return fmt.Errorf("could not update asset: %w", err)
+	}
+	return nil
+}
+
+func GetBalance(ctx context.Context, repo AssetRepository, userID uint, assetType string) (float64, error) {
+	asset, err := repo.GetByUserIDAndType(ctx, userID, assetType)
+
+	if err != nil {
+		return 0, fmt.Errorf("could not get asset: %w", err)
+	}
+
+	if asset == nil {
+		return 0, fmt.Errorf("asset not found for user %d and type %s", userID, assetType)
+	}
+
+	return asset.Balance, nil
 }

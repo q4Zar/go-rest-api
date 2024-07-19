@@ -10,7 +10,8 @@ migrate:
 	docker run --rm -it --network=host -v "./app/database:/db" ghcr.io/amacneil/dbmate -u "$(DB_URL)" -no-dump-schema migrate
 
 run_scenario_1:
-	./tests.sh
+	./tests-damien.sh
+	./tests-qazar.sh
 
 all:
 	make reset
