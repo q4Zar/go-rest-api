@@ -20,7 +20,7 @@ all:
 	echo "wait postgres to be up"
 	sleep 4
 	make migrate
-	echo "wait for api to boot"
-	make run_go_api
+	# echo "wait for api to boot"
+	# make run_go_api
 	# make run_curl_tests
-	docker compose logs -f
+	# docker compose logs -f
