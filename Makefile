@@ -17,5 +17,6 @@ all:
 	make reset
 	sleep 4
 	make migrate
-	sleep 4
+	echo 'waiting for api to boot'
+	sleep 20
 	make run_scenario_1

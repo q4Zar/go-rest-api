@@ -9,27 +9,41 @@ services:
       - '55432:5432'
     restart: on-failure
 
-  # go-api:
-  #   image: golang:1.22
-  #   working_dir: /app
-  #   volumes:
-  #   - ./app:/app
-  #   ports:
-  #     - "127.0.0.1:8080:8080"
-  #   command: ["go", "run", "."]
-  #   depends_on:
-  #     - postgres
-  #   restart: on-failure
+  dbmate:
+    image: ghcr.io/amacneil/dbmate
+    environment:
+      DB_URL: ${DB_URL}
+    volumes:
+      - ./app/database:/db
+    command: ["migrate", "-u", "${DB_URL}", "-no-dump-schema"]
+    network_mode: host
+    restart: "no"
+    depends_on:
+      - postgres
 
-  # go-api-tests:
-  #   image: golang:1.22
-  #   working_dir: /app-tests
-  #   volumes:
-  #   - ./app-tests:/app-test
-  #   command: ["go", "run", "."]
-  #   depends_on:
-  #     - go-api
-  #   restart: on-failure
+  go-api:
+    image: golang:1.22
+    working_dir: /app
+    volumes:
+    - ./app:/app
+    ports:
+      - "8080:8080"
+    command: ["go", "run", "."]
+    depends_on:
+      - postgres
+      - dbmate
+    restart: on-failure
+
+  curl-tests:
+    build:
+      context: curl-tests
+      dockerfile: Dockerfile
+    working_dir: /usr/app/curl-tests
+    volumes:
+      - ./curl-tests:/usr/app/curl-tests
+    depends_on:
+      - go-api
+    restart: on-failure
 
 networks:
   default:

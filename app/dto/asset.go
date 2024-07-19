@@ -7,7 +7,7 @@ import (
 type Asset struct {
 	User *User `json:"owner,omitempty"`
 
-	Balance   float64 `json:"balance,omitempty"`
+	Balance   float64 `json:"balance"`
 	AssetType string  `json:"assetType,omitempty"`
 	UserID    uint    `json:"userID,omitempty"`
 	ID        uint    `json:"id,omitempty"`
