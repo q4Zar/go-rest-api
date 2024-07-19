@@ -79,3 +79,12 @@ func (r *Asset) IsOwner(ctx context.Context, resourceID, ownerID uint) (bool, er
 		Find(&one)
 	return one == 1, errors.New(db.Error)
 }
+
+func (r *Asset) GetByUserIDAndType(ctx context.Context, userID uint, assetType string) (*model.Asset, error) {
+	var asset model.Asset
+	result := r.DB.WithContext(ctx).Where("user_id = ? AND asset_type = ?", userID, assetType).First(&asset)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return &asset, nil
+}

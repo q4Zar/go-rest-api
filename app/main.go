@@ -8,6 +8,7 @@ import (
 	// seeders "github.com/q4Zar/go-rest-api/database/seed"
 	"github.com/q4Zar/go-rest-api/http/route"
 	"github.com/q4Zar/go-rest-api/service/asset"
+	"github.com/q4Zar/go-rest-api/service/order"
 	"github.com/q4Zar/go-rest-api/service/user"
 
 	"goyave.dev/goyave/v5"
@@ -64,7 +65,9 @@ func registerServices(server *goyave.Server) {
 
 	userRepo := repository.NewUser(server.DB())
 	assetRepo := repository.NewAsset(server.DB())
+	orderRepo := repository.NewOrder(server.DB())
 
 	server.RegisterService(user.NewService(session, server.Logger, userRepo))
 	server.RegisterService(asset.NewService(session, assetRepo))
+	server.RegisterService(order.NewService(session, orderRepo, assetRepo))
 }

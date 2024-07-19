@@ -1,136 +1,80 @@
-package controllers
+package order
 
 import (
-	"sync"
+	"context"
+	"net/http"
+	"strconv"
 
+	"github.com/q4Zar/go-rest-api/dto"
+	"github.com/q4Zar/go-rest-api/http/middleware"
+	"github.com/q4Zar/go-rest-api/service"
+	"goyave.dev/filter"
 	"goyave.dev/goyave/v5"
+	"goyave.dev/goyave/v5/auth"
+	"goyave.dev/goyave/v5/database"
+	"goyave.dev/goyave/v5/util/typeutil"
 )
 
-type Order struct {
-	ID        int     `json:"id"`
-	UserID    int     `json:"user_id"`
-	Side      string  `json:"side"`
-	AssetPair string  `json:"asset_pair"`
-	Amount    float64 `json:"amount"`
-	Price     float64 `json:"price"`
-	Status    string  `json:"status"`
+type Service interface {
+	Index(ctx context.Context, request *filter.Request) (*database.PaginatorDTO[*dto.Order], error)
+	Create(ctx context.Context, createDTO *dto.CreateOrder) error
+	Delete(ctx context.Context, id uint) error
+	IsOwner(ctx context.Context, resourceID, ownerID uint) (bool, error)
 }
 
-type User struct {
-	ID      int
-	Balance map[string]float64
+type Controller struct {
+	goyave.Component
+	OrderService Service
 }
 
-var (
-	orders         = []Order{}
-	pendingOrders  = []Order{}
-	ordersMutex    sync.Mutex
-	users          = make(map[int]*User)
-	orderIDCounter = 1
-	orderChan      = make(chan Order, 100)
-	wg             sync.WaitGroup
-)
-
-func init() {
-	// Start the order matching service
-	wg.Add(1)
-	go matchOrders()
+func NewController() *Controller {
+	return &Controller{}
 }
 
-// CreateOrder handles creating a new order
-func CreateOrder(response *goyave.Response, request *goyave.Request) {
-	order := Order{
-		UserID:    request.UserID(),
-		Side:      request.String("side"),
-		AssetPair: request.String("asset_pair"),
-		Amount:    request.Float("amount"),
-		Price:     request.Float("price"),
-		Status:    "pending",
-	}
-
-	ordersMutex.Lock()
-	order.ID = orderIDCounter
-	orderIDCounter++
-	orders = append(orders, order)
-	pendingOrders = append(pendingOrders, order)
-	ordersMutex.Unlock()
-
-	// Send the order to the matching service
-	orderChan <- order
-
-	response.JSON(201, order)
+func (ctrl *Controller) Init(server *goyave.Server) {
+	ctrl.Component.Init(server)
+	ctrl.OrderService = server.Service(service.Order).(Service)
 }
 
-// GetOrders handles fetching all orders
-func GetOrders(response *goyave.Response, request *goyave.Request) {
-	ordersMutex.Lock()
-	defer ordersMutex.Unlock()
-	response.JSON(200, orders)
+func (ctrl *Controller) RegisterRoutes(router *goyave.Router) {
+	subrouter := router.Subrouter("/orders")
+
+	authRouter := subrouter.Group().SetMeta(auth.MetaAuth, true)
+	authRouter.Post("/", ctrl.Create).ValidateBody(ctrl.CreateRequest)
+	authRouter.Get("/", ctrl.Index).ValidateQuery(filter.Validation)
+
+	ownedRouter := authRouter.Group()
+	ownerMiddleware := middleware.NewOwner("orderD", ctrl.OrderService)
+	ownedRouter.Middleware(ownerMiddleware)
+	ownedRouter.Delete("/{orderID:[0-9]+}", ctrl.Delete)
 }
 
-// GetAssets handles fetching user assets
-func GetAssets(response *goyave.Response, request *goyave.Request) {
-	userID := request.UserID() // Assuming user ID is retrieved from the request context
-	user, exists := users[userID]
-	if !exists {
-		response.Error(404, "User not found")
+func (ctrl *Controller) Index(response *goyave.Response, request *goyave.Request) {
+	paginator, err := ctrl.OrderService.Index(request.Context(), filter.NewRequest(request.Query))
+	if response.WriteDBError(err) {
 		return
 	}
-	response.JSON(200, user.Balance)
+	response.JSON(http.StatusOK, paginator)
 }
 
-func matchOrders() {
-	defer wg.Done()
-	for order := range orderChan {
-		ordersMutex.Lock()
-		for i, pendingOrder := range pendingOrders {
-			if pendingOrder.AssetPair == order.AssetPair && pendingOrder.Price == order.Price && pendingOrder.Amount == order.Amount && pendingOrder.Side != order.Side {
-				// Match found
-				pendingOrders = append(pendingOrders[:i], pendingOrders[i+1:]...)
-				updateOrderStatus(order.ID, "filled")
-				updateOrderStatus(pendingOrder.ID, "filled")
-				updateBalances(order, pendingOrder)
-				break
-			}
-		}
-		ordersMutex.Unlock()
+func (ctrl *Controller) Create(response *goyave.Response, request *goyave.Request) {
+	createDTO := typeutil.MustConvert[*dto.CreateOrder](request.Data)
+	createDTO.UserID = request.User.(*dto.InternalUser).ID
+	err := ctrl.OrderService.Create(request.Context(), createDTO)
+	if err != nil {
+		response.Error(err)
+		return
 	}
+	response.Status(http.StatusCreated)
 }
 
-func updateOrderStatus(orderID int, status string) {
-	for i, order := range orders {
-		if order.ID == orderID {
-			orders[i].Status = status
-			break
-		}
+func (ctrl *Controller) Delete(response *goyave.Response, request *goyave.Request) {
+	id, err := strconv.ParseUint(request.RouteParams["orderID"], 10, 64)
+	if err != nil {
+		response.Status(http.StatusNotFound)
+		return
 	}
-}
 
-func updateBalances(order1, order2 Order) {
-	user1 := getUser(order1.UserID)
-	user2 := getUser(order2.UserID)
-
-	if order1.Side == "BUY" {
-		user1.Balance["EUR"] += order1.Amount / order1.Price
-		user1.Balance["USD"] -= order1.Amount
-		user2.Balance["EUR"] -= order2.Amount / order2.Price
-		user2.Balance["USD"] += order2.Amount
-	} else {
-		user1.Balance["EUR"] -= order1.Amount / order1.Price
-		user1.Balance["USD"] += order1.Amount
-		user2.Balance["EUR"] += order2.Amount / order2.Price
-		user2.Balance["USD"] -= order2.Amount
-	}
-}
-
-func getUser(userID int) *User {
-	user, exists := users[userID]
-	if !exists {
-		user = &User{
-			ID:      userID,
-			Balance: make(map[string]float64),
-		}
-		users[userID] = user
-	}
-	return user
+	err = ctrl.OrderService.Delete(request.Context(), uint(id))
+	response.WriteDBError(err)
 }

@@ -4,7 +4,7 @@ import (
 	"github.com/q4Zar/go-rest-api/http/controller/asset"
 	"github.com/q4Zar/go-rest-api/http/controller/user"
 
-	// "github.com/q4Zar/go-rest-api/http/controller/order"
+	"github.com/q4Zar/go-rest-api/http/controller/order"
 	"github.com/q4Zar/go-rest-api/service"
 	userservice "github.com/q4Zar/go-rest-api/service/user"
 	"goyave.dev/goyave/v5"
@@ -29,6 +29,7 @@ func Register(server *goyave.Server, router *goyave.Router) {
 
 	router.Controller(loginController)
 	router.Controller(asset.NewController())
+	router.Controller(order.NewController())
 	router.Controller(user.NewController())
 
 	// router.Post("/orders", controllers.CreateOrder)

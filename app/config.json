@@ -6,7 +6,7 @@
         "defaultLanguage": "en-US"
     },
     "server": {
-        "host": "127.0.0.1",
+        "host": "0.0.0.0",
         "port": 8080,
         "writeTimeout": 10,
         "readTimeout": 10,
@@ -20,7 +20,7 @@
         "username": "postgres",
         "password": "3f4f2770c42a8efddc80e61da8d7c9f71cfe2eb03ff6040542ad24a42192731f4af7e875ca5fc8736240",
         "connection": "postgres",
-        "port": 5432,
+        "port": 55432,
         "options": "sslmode=disable application_name=go-rest-api"
     },
     "auth": {
