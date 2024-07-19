@@ -77,47 +77,6 @@ func (s *Service) Index(ctx context.Context, request *filter.Request) (*database
 }
 
 func (s *Service) Create(ctx context.Context, createDTO *dto.CreateOrder) error {
-	// Determine asset types based on order side and asset pair
-	// var assetTypeToCheck string
-	// var requiredAmount float64
-	// switch createDTO.AssetPair {
-	// case "EUR-USD":
-	// 	if createDTO.Side == "BUY" {
-	// 		assetTypeToCheck = "EUR"
-	// 		requiredAmount = createDTO.Amount
-	// 	} else if createDTO.Side == "SELL" {
-	// 		assetTypeToCheck = "USD"
-	// 		requiredAmount = createDTO.Amount
-	// 	}
-	// case "USD-EUR":
-	// 	if createDTO.Side == "BUY" {
-	// 		assetTypeToCheck = "USD"
-	// 		requiredAmount = createDTO.Amount
-	// 	} else if createDTO.Side == "SELL" {
-	// 		assetTypeToCheck = "EUR"
-	// 		requiredAmount = createDTO.Amount
-	// 	}
-	// default:
-	// 	return errors.New("unsupported asset pair")
-	// }
-
-	// // Fetch the user's balance for the determined asset type
-	// balance, err := GetBalance(ctx, s.AssetRepository, createDTO.UserID, assetTypeToCheck)
-	// if err != nil {
-	// 	return errors.New(fmt.Sprintf("could not get balance: %v", err))
-	// }
-
-	// // Check if the user has enough balance
-	// if createDTO.Side == "BUY" {
-	// 	if requiredAmount < balance {
-	// 		return errors.New("insufficient balance to complete the purchase")
-	// 	}
-	// } else if createDTO.Side == "SELL" {
-	// 	if requiredAmount < balance {
-	// 		return errors.New("insufficient balance to complete the sale")
-	// 	}
-	// }
-
 	// Proceed to create the order
 	order := typeutil.Copy(&model.Order{}, createDTO)
 	order, err := s.Repository.Create(ctx, order)

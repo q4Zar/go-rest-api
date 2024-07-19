@@ -18,10 +18,9 @@ type Service interface {
 	Update(ctx context.Context, id uint, updateDTO *dto.UpdateUser) error
 }
 
-
 type Controller struct {
 	goyave.Component
-	UserService    Service
+	UserService Service
 }
 
 func NewController() *Controller {
@@ -35,10 +34,15 @@ func (ctrl *Controller) Init(server *goyave.Server) {
 
 func (ctrl *Controller) RegisterRoutes(router *goyave.Router) {
 	subrouter := router.Subrouter("/users")
+	subrouter.Get("/ready", ctrl.Ready)
 	subrouter.Post("/", ctrl.Register).ValidateBody(ctrl.RegisterRequest)
 
 	authRouter := subrouter.Group().SetMeta(auth.MetaAuth, true)
 	authRouter.Patch("/", ctrl.Update).ValidateBody(ctrl.UpdateRequest)
+}
+
+func (ctrl *Controller) Ready(response *goyave.Response, request *goyave.Request) {
+	response.Status(http.StatusOK)
 }
 
 func (ctrl *Controller) Register(response *goyave.Response, request *goyave.Request) {

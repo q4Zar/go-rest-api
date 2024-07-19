@@ -4,19 +4,23 @@ DB_URL="postgres://postgres:3f4f2770c42a8efddc80e61da8d7c9f71cfe2eb03ff6040542ad
 
 reset:
 	docker compose down --volumes --remove-orphans
-	docker compose up -d
+	docker compose up postgres -d
 
 migrate:
 	docker run --rm -it --network=host -v "./app/database:/db" ghcr.io/amacneil/dbmate -u "$(DB_URL)" -no-dump-schema migrate
 
-run_scenario_1:
-	./tests-damien.sh
-	./tests-qazar.sh
+run_go_api:
+	docker compose up go-api -d
+
+run_curl_tests:
+	docker compose up curl-tests
 
 all:
 	make reset
+	echo "wait postgres to be up"
 	sleep 4
 	make migrate
-	echo 'waiting for api to boot'
-	sleep 20
-	make run_scenario_1
+	echo "wait for api to boot"
+	make run_go_api
+	# make run_curl_tests
+	docker compose logs -f

@@ -1,80 +1,81 @@
+#!/bin/bash
+
+set -e
+
+go_api="$1"
+
 # 0
-echo 'creating user'
-curl -s -X POST -d '{"username": "qazar", "password": "p4ssW0rd_"}' -H "Content-Type: application/json" http://127.0.0.1:8080/users
+echo 'Creating user'
+curl -s -X POST -d '{"username": "qazar", "password": "p4ssW0rd_"}' -H "Content-Type: application/json" "$go_api/users"
 
 # 1
-echo 'login user'
+echo 'Logging in user'
 
-token=$(curl -s -X POST -d '{"username": "qazar", "password": "p4ssW0rd_"}' -H "Content-Type: application/json" http://127.0.0.1:8080/login | jq -r '.token')
-# echo $token
+token=$(curl -s -X POST -d '{"username": "qazar", "password": "p4ssW0rd_"}' -H "Content-Type: application/json" "$go_api/login" | jq -r '.token')
+echo "Token: $token"
 
 # 2
-echo 'creates assets'
+echo 'Creating assets'
 
 ## EUR
-asset_euro_success=$(curl -s -X POST -H "Authorization: Bearer $token" -d '{"assetType": "EUR", "balance" : 2000}' -H "Content-Type: application/json" http://127.0.0.1:8080/assets)
-# echo $asset_euro_success
+asset_euro_success=$(curl -s -X POST -H "Authorization: Bearer $token" -d '{"assetType": "EUR", "balance" : 10000}' -H "Content-Type: application/json" "$go_api/assets")
+echo "Asset Euro Success: $asset_euro_success"
 
 ### duplicate on index currency & user
-# asset_euro_fails_2=$(curl -s -X POST -H "Authorization: Bearer $token" -d '{"assetType": "EUR", "balance" : 22356.54897}' -H "Content-Type: application/json" http://127.0.0.1:8080/assets)
-# echo $asset_euro_fails_2
+# asset_euro_fails_2=$(curl -s -X POST -H "Authorization: Bearer $token" -d '{"assetType": "EUR", "balance" : 22356.54897}' -H "Content-Type: application/json" "$go_api/assets")
+# echo "Asset Euro Fails 2: $asset_euro_fails_2"
 
-##USD
-asset_dollar_success=$(curl -s -X POST -H "Authorization: Bearer $token" -d '{"assetType": "USD", "balance" : 2000}' -H "Content-Type: application/json" http://127.0.0.1:8080/assets)
-# echo $asset_dollar_success
+## USD
+asset_dollar_success=$(curl -s -X POST -H "Authorization: Bearer $token" -d '{"assetType": "USD", "balance" : 10000}' -H "Content-Type: application/json" "$go_api/assets")
+echo "Asset Dollar Success: $asset_dollar_success"
 
 # ### duplicate on index currency & user
-# asset_dollar_fails_1=$(curl -s -X POST -H "Authorization: Bearer $token" -d '{"assetType": "USD", "balance" : 22356.54897}' -H "Content-Type: application/json" http://127.0.0.1:8080/assets)
-# echo $asset_dollar_fails_1
+# asset_dollar_fails_1=$(curl -s -X POST -H "Authorization: Bearer $token" -d '{"assetType": "USD", "balance" : 22356.54897}' -H "Content-Type: application/json" "$go_api/assets")
+# echo "Asset Dollar Fails 1: $asset_dollar_fails_1"
 
 # 3
-echo 'get user assets'
+echo 'Getting user assets'
 
-assets=$(curl -s -H "Authorization: Bearer $token" "http://127.0.0.1:8080/assets?fields=balance,asset_type,user_id")
+assets=$(curl -s -H "Authorization: Bearer $token" "$go_api/assets?fields=balance,asset_type,user_id")
 echo "$assets" | jq '.'
 
 # 4
-echo 'creates orders'
+echo 'Creating orders'
 
-order_buy_usdeur=$(curl -s -X POST -H "Authorization: Bearer $token" -d '{"amount": 1000, "price" : 1.2, "side":"SELL", "assetPair" : "USD-EUR"}' -H "Content-Type: application/json" http://127.0.0.1:8080/orders)
-# echo $order_sell_usdeur
+order_buy_usdeur=$(curl -s -X POST -H "Authorization: Bearer $token" -d '{"amount": 1000, "price" : 1.2, "side":"SELL", "assetPair" : "USD-EUR"}' -H "Content-Type: application/json" "$go_api/orders")
+echo "Order Buy USD-EUR: $order_buy_usdeur"
 
-order_buy_eurusd=$(curl -s -X POST -H "Authorization: Bearer $token" -d '{"amount": 1000, "price" : 1.2, "side":"BUY", "assetPair" : "EUR-USD"}' -H "Content-Type: application/json" http://127.0.0.1:8080/orders)
-# echo $order_buy_eurusd
+order_buy_eurusd=$(curl -s -X POST -H "Authorization: Bearer $token" -d '{"amount": 1000, "price" : 1.2, "side":"BUY", "assetPair" : "EUR-USD"}' -H "Content-Type: application/json" "$go_api/orders")
+echo "Order Buy EUR-USD: $order_buy_eurusd"
 
-order_buy_usdeur=$(curl -s -X POST -H "Authorization: Bearer $token" -d '{"amount": 1000, "price" : 1.2, "side":"SELL", "assetPair" : "USD-EUR"}' -H "Content-Type: application/json" http://127.0.0.1:8080/orders)
-# echo $order_sell_usdeur
+order_buy_usdeur=$(curl -s -X POST -H "Authorization: Bearer $token" -d '{"amount": 50, "price" : 1.1, "side":"SELL", "assetPair" : "USD-EUR"}' -H "Content-Type: application/json" "$go_api/orders")
+echo "Order Buy USD-EUR Smaller: $order_buy_usdeur"
 
-order_buy_eurusd=$(curl -s -X POST -H "Authorization: Bearer $token" -d '{"amount": 1000, "price" : 1.2, "side":"BUY", "assetPair" : "EUR-USD"}' -H "Content-Type: application/json" http://127.0.0.1:8080/orders)
-# echo $order_buy_eurusd
+order_buy_eurusd=$(curl -s -X POST -H "Authorization: Bearer $token" -d '{"amount": 50, "price" : 1.1, "side":"BUY", "assetPair" : "EUR-USD"}' -H "Content-Type: application/json" "$go_api/orders")
+echo "Order Buy EUR-USD Smaller: $order_buy_eurusd"
 
-order_buy_usdeur=$(curl -s -X POST -H "Authorization: Bearer $token" -d '{"amount": 500, "price" : 1.4, "side":"SELL", "assetPair" : "USD-EUR"}' -H "Content-Type: application/json" http://127.0.0.1:8080/orders)
-# echo $order_sell_usdeur
-
-order_buy_eurusd=$(curl -s -X POST -H "Authorization: Bearer $token" -d '{"amount": 500, "price" : 1.4, "side":"BUY", "assetPair" : "EUR-USD"}' -H "Content-Type: application/json" http://127.0.0.1:8080/orders)
-# echo $order_buy_eurusd
-
-# 5 check for orders
-echo "GET /orders"
-orders=$(curl -s -H "Authorization: Bearer $token" "http://127.0.0.1:8080/orders")
+# 5 Check for orders
+echo 'Checking for orders'
+orders=$(curl -s -H "Authorization: Bearer $token" "$go_api/orders")
 echo "$orders" | jq '.'
 
 sleep 4
 
-# 5 check for new balances
-
-assets=$(curl -s -H "Authorization: Bearer $token" "http://127.0.0.1:8080/assets?fields=balance,asset_type,user_id")
+# 5 Check for new balances
+echo 'Checking for new balances'
+assets=$(curl -s -H "Authorization: Bearer $token" "$go_api/assets?fields=balance,asset_type,user_id")
 echo "$assets" | jq '.'
 
 sleep 2
 
-# 5 check for orders
-orders=$(curl -s -H "Authorization: Bearer $token" "http://127.0.0.1:8080/orders")
+# 5 Check for orders
+echo 'Checking for orders again'
+orders=$(curl -s -H "Authorization: Bearer $token" "$go_api/orders")
 echo "$orders" | jq '.'
 
 sleep 2
 
-# 5 check for new balances
-
-assets=$(curl -s -H "Authorization: Bearer $token" "http://127.0.0.1:8080/assets?fields=balance,asset_type,user_id")
+# 5 Check for new balances
+echo 'Checking for new balances again'
+assets=$(curl -s -H "Authorization: Bearer $token" "$go_api/assets?fields=balance,asset_type,user_id")
 echo "$assets" | jq '.'
