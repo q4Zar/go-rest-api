@@ -57,3 +57,7 @@ echo $order_buy_usdeur
 
 order_buy_eurusd=$(curl -X POST -H "Authorization: Bearer $token" -d '{"amount": 1000, "price" : 1.2, "side":"SELL", "assetPair" : "EUR-USD"}' -H "Content-Type: application/json" http://127.0.0.1:8080/orders)
 echo $order_buy_eurusd
+
+# 5 check for orders
+orders=$(curl -H "Authorization: Bearer $token" "http://127.0.0.1:8080/orders")
+echo "$orders" | jq '.'

@@ -11,16 +11,26 @@ services:
 
   # go-api:
   #   image: golang:1.22
-  #   # working_dir: /app
+  #   working_dir: /app
   #   volumes:
   #   - ./app:/app
   #   ports:
-  #     - "8080:8080"
-  #   build: .
-  #   # command: ["go", "run", "."]
+  #     - "127.0.0.1:8080:8080"
+  #   command: ["go", "run", "."]
   #   depends_on:
   #     - postgres
   #   restart: on-failure
+
+  # go-api-tests:
+  #   image: golang:1.22
+  #   working_dir: /app-tests
+  #   volumes:
+  #   - ./app-tests:/app-test
+  #   command: ["go", "run", "."]
+  #   depends_on:
+  #     - go-api
+  #   restart: on-failure
+
 networks:
   default:
     name: goyave-backend

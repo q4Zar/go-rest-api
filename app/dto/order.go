@@ -7,6 +7,7 @@ type Order struct {
 	Price     float64 `json:"price,omitempty"`
 	AssetPair string  `json:"assetPair,omitempty"`
 	Side      string  `json:"side,omitempty"`
+	Status    string  `json:"status,omitempty"`
 	UserID    uint    `json:"userID,omitempty"`
 	ID        uint    `json:"id,omitempty"`
 }
