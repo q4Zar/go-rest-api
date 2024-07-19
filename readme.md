@@ -6,10 +6,12 @@
 - Overall, I decided to use Goyave because I like the way it is built and its integration with PostgreSQL through native GORM. I think it's super pertinent ;)
     - I had never used it before starting the test. I did a little research and discovered it.
     - So, I encountered a bit of a learning curve, but it was cool and stimulating for my brain.
+    - I could promote the framework a lot, though!
 
 - I switched from basic auth to JWT because it allows me to recognize the owner of any resource.
     - If we want to build a good product with a long-term vision, this is the way to go.
     - I hope you'll see the benefits :)
+
 
 ---
 
@@ -23,9 +25,19 @@
 `asset_euro_success=$(curl -s -X POST -H "Authorization: Bearer $token" -d '{"assetType": "EUR", "balance" : 10000}' -H "Content-Type: application/json" "$go_api/assets")`
 #### USD
 `asset_dollar_success=$(curl -s -X POST -H "Authorization: Bearer $token" -d '{"assetType": "USD", "balance" : 10000}' -H "Content-Type: application/json" "$go_api/assets")`
-
 ### Create Order
+#### USD-EUR
+order_buy_usdeur=$(curl -s -X POST -H "Authorization: Bearer $token" -d '{"amount": 1000, "price" : 1.2, "side":"SELL", "assetPair" : "USD-EUR"}' -H "Content-Type: application/json" "$go_api/orders")
+order_buy_usdeur=$(curl -s -X POST -H "Authorization: Bearer $token" -d '{"amount": 1000, "price" : 1.2, "side":"BUY", "assetPair" : "USD-EUR"}' -H "Content-Type: application/json" "$go_api/orders")
+#### EUR-USD
+order_buy_eurusd=$(curl -s -X POST -H "Authorization: Bearer $token" -d '{"amount": 1000, "price" : 1.2, "side":"BUY", "assetPair" : "EUR-USD"}' -H "Content-Type: application/json" "$go_api/orders")
+order_buy_eurusd=$(curl -s -X POST -H "Authorization: Bearer $token" -d '{"amount": 1000, "price" : 1.2, "side":"SELL", "assetPair" : "EUR-USD"}' -H "Content-Type: application/json" "$go_api/orders")
 
+### Get Assets
+`assets=$(curl -s -H "Authorization: Bearer $token" "$go_api/assets?fields=balance,asset_type,user_id")`
+
+### Get Orders
+`orders=$(curl -s -H "Authorization: Bearer $token" "$go_api/orders")`
 ---
 
 ## Running (2 Terminals for better readability)
@@ -70,17 +82,15 @@ go-api-1    | host: 0.0.0.0:8080
 
 ---
 
-## Quick Optimization
-- Check Balance Before Creating Order (i started but i'm running out of time so i just stick to the initial subject)
-- Go Client to query API
-- GET /assets /orders only returns Owner data like PATCH & DELETE
+## Quick Further Optimization
+- Check balance before creating an order (I started, but I'm running out of time, so I just stuck to the initial subject)
+- Go client to query the API
+- GET `/assets` and `/orders` should return only owner data, similar to PATCH & DELETE
 - ...
-
 ---
 
 ## Outro
-- Hope you like i enjoyed doing it, asynchronously some hours there and here for a week
-- I think it's a great implementation to start a good system
-- I could have done an easie micro-framework and sqlx with RAW SQL but i wanted to try something else and i found goyave really pertinent and recent espacially with the files segmentations
-- Don't hesitate if you have any questions 
-
+- I hope you like it. I enjoyed working on it, spending a few hours here and there over the course of a week.
+- I believe it's a great implementation to start building a robust system.
+- I could have opted for a simpler micro-framework like `Echo` with `sqlx` and RAW SQL, but I wanted to try something different. I found Goyave to be very pertinent and recent, especially with its file segmentation features, making it more maintainable for a long-term product.
+- Don’t hesitate to reach out if you have any questions.
