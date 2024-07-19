@@ -22,5 +22,5 @@ all:
 	make migrate
 	echo "wait for api to boot"
 	make run_go_api
-	# make run_curl_tests
 	docker compose logs -f
+	# make run_curl_tests

@@ -34,16 +34,16 @@ services:
       # - dbmate
     restart: on-failure
 
-  curl-tests:
-    build:
-      context: curl-tests
-      dockerfile: Dockerfile
-    working_dir: /usr/app/curl-tests
-    volumes:
-      - ./curl-tests:/usr/app/curl-tests
-    depends_on:
-      - go-api
-    restart: on-failure
+  # curl-tests:
+  #   build:
+  #     context: curl-tests
+  #     dockerfile: Dockerfile
+  #   working_dir: /usr/app/curl-tests
+  #   volumes:
+  #     - ./curl-tests:/usr/app/curl-tests
+  #   depends_on:
+  #     - go-api
+  #   restart: on-failure
 
 networks:
   default:

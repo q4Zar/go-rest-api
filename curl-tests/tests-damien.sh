@@ -18,7 +18,7 @@ echo "Token: $token"
 echo 'Creating assets'
 
 ## EUR
-asset_euro_success=$(curl -s -X POST -H "Authorization: Bearer $token" -d '{"assetType": "EUR", "balance" : 1000}' -H "Content-Type: application/json" "$go_api/assets")
+asset_euro_success=$(curl -s -X POST -H "Authorization: Bearer $token" -d '{"assetType": "EUR", "balance" : 10000}' -H "Content-Type: application/json" "$go_api/assets")
 echo "Asset Euro Success: $asset_euro_success"
 
 ### duplicate on index currency & user
@@ -26,7 +26,7 @@ echo "Asset Euro Success: $asset_euro_success"
 # echo "Asset Euro Fails 2: $asset_euro_fails_2"
 
 ## USD
-asset_dollar_success=$(curl -s -X POST -H "Authorization: Bearer $token" -d '{"assetType": "USD", "balance" : 1000}' -H "Content-Type: application/json" "$go_api/assets")
+asset_dollar_success=$(curl -s -X POST -H "Authorization: Bearer $token" -d '{"assetType": "USD", "balance" : 10000}' -H "Content-Type: application/json" "$go_api/assets")
 echo "Asset Dollar Success: $asset_dollar_success"
 
 # ### duplicate on index currency & user
@@ -47,12 +47,6 @@ echo "Order Buy USD-EUR: $order_buy_usdeur"
 
 order_buy_eurusd=$(curl -s -X POST -H "Authorization: Bearer $token" -d '{"amount": 1000, "price" : 1.2, "side":"SELL", "assetPair" : "EUR-USD"}' -H "Content-Type: application/json" "$go_api/orders")
 echo "Order Buy EUR-USD: $order_buy_eurusd"
-
-order_buy_usdeur=$(curl -s -X POST -H "Authorization: Bearer $token" -d '{"amount": 50, "price" : 1.1, "side":"BUY", "assetPair" : "USD-EUR"}' -H "Content-Type: application/json" "$go_api/orders")
-echo "Order Buy USD-EUR Smaller: $order_buy_usdeur"
-
-order_buy_eurusd=$(curl -s -X POST -H "Authorization: Bearer $token" -d '{"amount": 50, "price" : 1.1, "side":"SELL", "assetPair" : "EUR-USD"}' -H "Content-Type: application/json" "$go_api/orders")
-echo "Order Buy EUR-USD Smaller: $order_buy_eurusd"
 
 # 5 Check for orders
 echo 'Checking for orders'

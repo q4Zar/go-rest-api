@@ -1,17 +1,17 @@
 #!/bin/bash
 
 set -e
-set -x  # Print each command before executing it
+# set -x  # Print each command before executing it
 
 host="$1"
 
 # Wait until the Go API is accessible
 until curl -s -f -o /dev/null "$host/users/ready"; do
-  >&2 echo "Go API is unavailable - sleeping"
+  # >&2 echo "Go API is unavailable - sleeping"
   sleep 2
 done
 
->&2 echo "Go API is up - executing scripts"
+# >&2 echo "Go API is up - executing scripts"
 
 # Execute the first script and display its output
 echo "Executing tests-damien.sh $host"
