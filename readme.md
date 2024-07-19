@@ -13,18 +13,20 @@
     - I hope you'll see the benefits :)
 
 
----
+
 
 ## Tiny Docs
 ### Create User
 `curl -s -X POST -d '{"username": "qazar", "password": "p4ssW0rd_"}' -H "Content-Type: application/json" "$go_api/users"`
 ### Login User
 `token=$(curl -s -X POST -d '{"username": "qazar", "password": "p4ssW0rd_"}' -H "Content-Type: application/json" "$go_api/login" | jq -r '.token')`
+---
 ### Create Asset
 #### EUR
 `asset_euro_success=$(curl -s -X POST -H "Authorization: Bearer $token" -d '{"assetType": "EUR", "balance" : 10000}' -H "Content-Type: application/json" "$go_api/assets")`
 #### USD
 `asset_dollar_success=$(curl -s -X POST -H "Authorization: Bearer $token" -d '{"assetType": "USD", "balance" : 10000}' -H "Content-Type: application/json" "$go_api/assets")`
+---
 ### Create Order
 #### USD-EUR
 `order_buy_usdeur=$(curl -s -X POST -H "Authorization: Bearer $token" -d '{"amount": 1000, "price" : 1.2, "side":"SELL", "assetPair" : "USD-EUR"}' -H "Content-Type: application/json" "$go_api/orders")`
@@ -32,13 +34,13 @@
 #### EUR-USD
 `order_buy_eurusd=$(curl -s -X POST -H "Authorization: Bearer $token" -d '{"amount": 1000, "price" : 1.2, "side":"BUY", "assetPair" : "EUR-USD"}' -H "Content-Type: application/json" "$go_api/orders")`
 `order_buy_eurusd=$(curl -s -X POST -H "Authorization: Bearer $token" -d '{"amount": 1000, "price" : 1.2, "side":"SELL", "assetPair" : "EUR-USD"}' -H "Content-Type: application/json" "$go_api/orders")`
-
+---
 ### Get Assets
 `assets=$(curl -s -H "Authorization: Bearer $token" "$go_api/assets?fields=balance,asset_type,user_id")`
-
+---
 ### Get Orders
 `orders=$(curl -s -H "Authorization: Bearer $token" "$go_api/orders")`
----
+
 
 ## Running (2 Terminals for better readability)
 **I automatized everything but there is some output defaults so it's easier to just trigger it manually)
@@ -69,7 +71,7 @@ go-api-1    | host: 0.0.0.0:8080
 - ./tests-qazar.sh http://localhost:8080
 [![asciicast](https://asciinema.org/a/WTw7DkXugJ6xVXHWBBFvUFIp7.svg)](https://asciinema.org/a/WTw7DkXugJ6xVXHWBBFvUFIp7)
 
----
+
 
 ## ScreenShots
 
@@ -80,14 +82,14 @@ go-api-1    | host: 0.0.0.0:8080
 ### Orders
 ![Orders](.screenshots/orders.png)
 
----
+
 
 ## Quick Further Optimization
 - Check balance before creating an order (I started, but I'm running out of time, so I just stuck to the initial subject)
 - Go client to query the API
 - GET `/assets` and `/orders` should return only owner data, similar to PATCH & DELETE
 - ...
----
+
 
 ## Outro
 - I hope you like it. I enjoyed working on it, spending a few hours here and there over the course of a week.
