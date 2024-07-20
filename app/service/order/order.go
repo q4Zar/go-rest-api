@@ -83,6 +83,7 @@ func (s *Service) Create(ctx context.Context, createDTO *dto.CreateOrder) error 
 	if err != nil {
 		return errors.New(err)
 	}
+	fmt.Println(order)
 
 	// Add the order to the matching process
 	s.addOrderToMatching(order)
@@ -125,14 +126,13 @@ func (s *Service) matchOrders(pair string) {
 }
 
 func (s *Service) processOrder(order *model.Order, oppositeSide string) {
-	// fmt.Println("processOrder")
+	fmt.Println("EUR-USD.Buy", len(s.channels["EUR-USD"].Buy), "EUR-USD.Sell", len(s.channels["EUR-USD"].Sell), "USD-EUR.Buy", len(s.channels["USD-EUR"].Buy), "USD-EUR.Sell", len(s.channels["USD-EUR"].Sell))
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
 	oppositeOrders := s.channels[order.AssetPair]
 	var oppositeChan chan *model.Order
 	if oppositeSide == "BUY" {
-
 		oppositeChan = oppositeOrders.Buy
 	} else {
 		oppositeChan = oppositeOrders.Sell
@@ -141,7 +141,14 @@ func (s *Service) processOrder(order *model.Order, oppositeSide string) {
 	for {
 		select {
 		case oppositeOrder := <-oppositeChan:
+			// Ensure we're not processing the same order repeatedly
+			if oppositeOrder.ID == order.ID {
+				oppositeChan <- oppositeOrder // Put it back and continue
+				continue
+			}
 			if oppositeOrder.Price == order.Price && oppositeOrder.Amount == order.Amount {
+				fmt.Println(oppositeOrder)
+				fmt.Println(order)
 				fmt.Printf("Matching Orders: ID %d (side: %s) and ID %d (side: %s)\n", order.ID, order.Side, oppositeOrder.ID, oppositeOrder.Side)
 
 				// Update orders in the database
@@ -158,11 +165,9 @@ func (s *Service) processOrder(order *model.Order, oppositeSide string) {
 				fmt.Printf("Updating balances for users %d and %d\n", order.UserID, oppositeOrder.UserID)
 				if err := UpdateBalance(context.Background(), s.AssetRepository, order.UserID, "EUR", -order.Amount); err != nil {
 					fmt.Printf("Failed to update balance for user %d: %v\n", order.UserID, err)
-					fmt.Println(8)
 				}
 				if err := UpdateBalance(context.Background(), s.AssetRepository, oppositeOrder.UserID, "USD", order.Amount); err != nil {
 					fmt.Printf("Failed to update balance for user %d: %v\n", oppositeOrder.UserID, err)
-					fmt.Println(9)
 				}
 
 				return
@@ -171,11 +176,13 @@ func (s *Service) processOrder(order *model.Order, oppositeSide string) {
 				oppositeChan <- oppositeOrder
 			}
 		default:
-			// No matching order found, put the order back to the channel
-			if order.Side == "BUY" {
-				s.channels[order.AssetPair].Buy <- order
-			} else {
-				s.channels[order.AssetPair].Sell <- order
+			// No matching order found, put the order back to the channel if it's not matched
+			if order.Status != "Filled" {
+				if order.Side == "BUY" {
+					s.channels[order.AssetPair].Buy <- order
+				} else {
+					s.channels[order.AssetPair].Sell <- order
+				}
 			}
 			return
 		}

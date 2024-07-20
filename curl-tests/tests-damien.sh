@@ -42,11 +42,13 @@ echo "$assets" | jq '.'
 # 4
 echo 'Creating orders'
 
-order_buy_usdeur=$(curl -s -X POST -H "Authorization: Bearer $token" -d '{"amount": 1000, "price" : 1.2, "side":"BUY", "assetPair" : "USD-EUR"}' -H "Content-Type: application/json" "$go_api/orders")
-echo "Order Buy USD-EUR: $order_buy_usdeur"
+curl -s -X POST -H "Authorization: Bearer $token" -d '{"amount": 1000, "price" : 1.2, "side":"BUY", "assetPair" : "USD-EUR"}' -H "Content-Type: application/json" "$go_api/orders"
 
-order_buy_eurusd=$(curl -s -X POST -H "Authorization: Bearer $token" -d '{"amount": 1000, "price" : 1.2, "side":"SELL", "assetPair" : "EUR-USD"}' -H "Content-Type: application/json" "$go_api/orders")
-echo "Order Buy EUR-USD: $order_buy_eurusd"
+# curl -s -X POST -H "Authorization: Bearer $token" -d '{"amount": 1000, "price" : 1.2, "side":"SELL", "assetPair" : "USD-EUR"}' -H "Content-Type: application/json" "$go_api/orders"
+
+# curl -s -X POST -H "Authorization: Bearer $token" -d '{"amount": 1000, "price" : 1.1, "side":"BUY", "assetPair" : "EUR-USD"}' -H "Content-Type: application/json" "$go_api/orders"
+
+curl -s -X POST -H "Authorization: Bearer $token" -d '{"amount": 1000, "price" : 1.1, "side":"SELL", "assetPair" : "EUR-USD"}' -H "Content-Type: application/json" "$go_api/orders"
 
 # 5 Check for orders
 echo 'Checking for orders'
