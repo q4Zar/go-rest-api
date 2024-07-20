@@ -1,6 +1,5 @@
 # github.com/q4Zar/go-rest-api
 
-
 ## State of Mind
 
 - Overall, I decided to use Goyave because I like the way it is built and its integration with PostgreSQL through native GORM. I think it's super pertinent ;)
@@ -131,3 +130,5 @@ go-api-1    | host: 0.0.0.0:8080
 - I believe it's a great implementation to start building a robust system.
 - I could have opted for a simpler micro-framework like `Echo` with `sqlx` and RAW SQL, but I wanted to try something different. I found Goyave to be very pertinent and recent, especially with its file segmentation features, making it more maintainable for a long-term product.
 - Don’t hesitate to reach out if you have any questions.
+
+---
