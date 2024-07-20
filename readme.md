@@ -71,6 +71,7 @@
 - terminal 3
     - solution 1 :
         - `go run cli.go`
+        [![asciicast](https://asciinema.org/a/Tey91eDSwzLFOF32QKZqA5FaI.svg)](https://asciinema.org/a/Tey91eDSwzLFOF32QKZqA5FaI)
     - solution 2 :
     - `cd curl-tests`
     - `./tests-damien.sh http://localhost:8080`
