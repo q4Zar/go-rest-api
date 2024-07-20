@@ -60,10 +60,26 @@
 `orders=$(curl -s -H "Authorization: Bearer $token" "$go_api/orders")`
 
 
-## Running (2 Terminals for better readability)
-**I automatized everything but there is some output defaults so it's easier to just trigger it manually)
+## Running **prefered solution (go-api on host)**
+
+### go-api on host (better reactivity and no display bugs for consolog logs)
+- `git switch main-go-host`
+- terminal 1 `sudo make all (restart db and flush data)`
+- terminal 2 
+    - `cd ./app`
+    - `go run .`
+- terminal 3
+    - solution 1 :
+        - `go run cli.go`
+    - solution 2 :
+    - `cd curl-tests`
+    - `./tests-damien.sh http://localhost:8080`
+    - `./tests-qazar.sh http://localhost:8080`
+
 
 ### go-api containerized (display bug and less reactivity)
+
+- `git switch main-containerized`
 
 #### Terminal 1
 - sudo make all (run postgres, migrate, boot api)
@@ -91,15 +107,6 @@ go-api-1    | host: 0.0.0.0:8080
 - ./tests-qazar.sh http://localhost:8080
 [![asciicast](https://asciinema.org/a/WTw7DkXugJ6xVXHWBBFvUFIp7.svg)](https://asciinema.org/a/WTw7DkXugJ6xVXHWBBFvUFIp7)
 
-### go-api on host (better reactivity and no display bugs for consolog logs)
-- `git switch main-go-host`
-- terminal 1 `sudo make all (restart db and flush data)`
-- terminal 2 
-    - `cd ./app`
-    - `go run .`
-- terminal 3
-    - `./tests-damien.sh http://localhost:8080`
-    - `./tests-qazar.sh http://localhost:8080`
 
 ## ScreenShots
 
