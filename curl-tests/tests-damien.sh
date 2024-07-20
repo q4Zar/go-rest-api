@@ -40,38 +40,38 @@ assets=$(curl -s -H "Authorization: Bearer $token" "$go_api/assets?fields=balanc
 echo "$assets" | jq '.'
 
 # 4
-echo 'Creating orders'
+# echo 'Creating orders'
 
-curl -s -X POST -H "Authorization: Bearer $token" -d '{"amount": 1000, "price" : 1.2, "side":"BUY", "assetPair" : "USD-EUR"}' -H "Content-Type: application/json" "$go_api/orders"
+# curl -s -X POST -H "Authorization: Bearer $token" -d '{"amount": 1000, "price" : 1.2, "side":"BUY", "assetPair" : "USD-EUR"}' -H "Content-Type: application/json" "$go_api/orders"
 
-# curl -s -X POST -H "Authorization: Bearer $token" -d '{"amount": 1000, "price" : 1.2, "side":"SELL", "assetPair" : "USD-EUR"}' -H "Content-Type: application/json" "$go_api/orders"
+# # curl -s -X POST -H "Authorization: Bearer $token" -d '{"amount": 1000, "price" : 1.2, "side":"SELL", "assetPair" : "USD-EUR"}' -H "Content-Type: application/json" "$go_api/orders"
 
-# curl -s -X POST -H "Authorization: Bearer $token" -d '{"amount": 1000, "price" : 1.1, "side":"BUY", "assetPair" : "EUR-USD"}' -H "Content-Type: application/json" "$go_api/orders"
+# # curl -s -X POST -H "Authorization: Bearer $token" -d '{"amount": 1000, "price" : 1.1, "side":"BUY", "assetPair" : "EUR-USD"}' -H "Content-Type: application/json" "$go_api/orders"
 
-curl -s -X POST -H "Authorization: Bearer $token" -d '{"amount": 1000, "price" : 1.1, "side":"SELL", "assetPair" : "EUR-USD"}' -H "Content-Type: application/json" "$go_api/orders"
+# curl -s -X POST -H "Authorization: Bearer $token" -d '{"amount": 1000, "price" : 1.1, "side":"SELL", "assetPair" : "EUR-USD"}' -H "Content-Type: application/json" "$go_api/orders"
 
-# 5 Check for orders
-echo 'Checking for orders'
-orders=$(curl -s -H "Authorization: Bearer $token" "$go_api/orders")
-echo "$orders" | jq '.'
+# # 5 Check for orders
+# echo 'Checking for orders'
+# orders=$(curl -s -H "Authorization: Bearer $token" "$go_api/orders")
+# echo "$orders" | jq '.'
 
-sleep 4
+# sleep 4
 
-# 5 Check for new balances
-echo 'Checking for new balances'
-assets=$(curl -s -H "Authorization: Bearer $token" "$go_api/assets?fields=balance,asset_type,user_id")
-echo "$assets" | jq '.'
+# # 5 Check for new balances
+# echo 'Checking for new balances'
+# assets=$(curl -s -H "Authorization: Bearer $token" "$go_api/assets?fields=balance,asset_type,user_id")
+# echo "$assets" | jq '.'
 
-sleep 2
+# sleep 2
 
-# 5 Check for orders
-echo 'Checking for orders again'
-orders=$(curl -s -H "Authorization: Bearer $token" "$go_api/orders")
-echo "$orders" | jq '.'
+# # 5 Check for orders
+# echo 'Checking for orders again'
+# orders=$(curl -s -H "Authorization: Bearer $token" "$go_api/orders")
+# echo "$orders" | jq '.'
 
-sleep 2
+# sleep 2
 
-# 5 Check for new balances
-echo 'Checking for new balances again'
-assets=$(curl -s -H "Authorization: Bearer $token" "$go_api/assets?fields=balance,asset_type,user_id")
-echo "$assets" | jq '.'
+# # 5 Check for new balances
+# echo 'Checking for new balances again'
+# assets=$(curl -s -H "Authorization: Bearer $token" "$go_api/assets?fields=balance,asset_type,user_id")
+# echo "$assets" | jq '.'

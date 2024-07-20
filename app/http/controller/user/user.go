@@ -2,6 +2,7 @@ package user
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	"github.com/q4Zar/go-rest-api/dto"
@@ -47,7 +48,7 @@ func (ctrl *Controller) Ready(response *goyave.Response, request *goyave.Request
 
 func (ctrl *Controller) Register(response *goyave.Response, request *goyave.Request) {
 	registerDTO := typeutil.MustConvert[*dto.RegisterUser](request.Data)
-
+	fmt.Println(registerDTO)
 	err := ctrl.UserService.Register(request.Context(), registerDTO)
 	if err != nil {
 		response.Error(err)
